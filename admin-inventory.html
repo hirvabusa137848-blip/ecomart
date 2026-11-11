@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Inventory - EcoMart Admin</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+
+  <body>
+    <div class="sidebar">
+      <h2>EcoMart</h2>
+      <p class="admin-label">ADMIN PANEL</p>
+
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="admin-products.html">Products</a>
+      <a href="admin-categories.html">Categories</a>
+      <a href="admin-orders.html">Orders</a>
+      <a href="admin-customers.html">Customers</a>
+      <a href="admin-inventory.html" class="active">Inventory</a>
+      <a href="admin-reviews.html">Reviews & Offers</a>
+
+      <a href="../index.html">View Website</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+    <div class="main-content">
+      <div class="top-header">
+        <div>
+          <h1>Manage Inventory</h1>
+          <p>Monitor product stock and availability.</p>
+        </div>
+
+        <div class="profile">
+          <div class="profile-icon">A</div>
+          <div>
+            <strong>Admin</strong>
+            <p>Administrator</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVENTORY SUMMARY -->
+
+      <div class="dashboard-cards">
+        <div class="dashboard-card">
+          <h3>Total Stock Items</h3>
+          <h2 id="totalStock">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Available Stock</h3>
+          <h2 id="availableStock">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Low Stock Items</h3>
+          <h2 id="lowStock">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Out of Stock</h3>
+          <h2 id="outOfStock">0</h2>
+        </div>
+      </div>
+
+      <!-- INVENTORY TABLE -->
+
+      <div class="dashboard-section">
+        <h2>Inventory List</h2>
+
+        <div class="product-search">
+          <input type="text" id="searchInput" placeholder="Search product..." />
+
+          <select id="stockFilter">
+            <option value="all">All Stock</option>
+            <option value="available">Available</option>
+            <option value="low">Low Stock</option>
+            <option value="out">Out of Stock</option>
+          </select>
+
+          <button type="button" class="admin-btn" id="searchButton">
+            Search
+          </button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Product ID</th>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th>Available Quantity</th>
+              <th>Minimum Stock</th>
+              <th>Stock Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody id="inventoryTable"></tbody>
+        </table>
+
+        <p id="noProducts" style="display: none; padding: 15px">
+          No products found.
+        </p>
+      </div>
+
+      <!-- STOCK INFORMATION -->
+
+      <div class="dashboard-section">
+        <h2>Stock Information</h2>
+
+        <p>Available Stock: Products with sufficient quantity.</p>
+        <p>Low Stock: Products that need restocking soon.</p>
+        <p>Out of Stock: Products that are currently unavailable.</p>
+      </div>
+    </div>
+
+    <script>
+      // GET PRODUCTS FROM LOCAL STORAGE
+
+      let products = JSON.parse(localStorage.getItem("ecoProducts")) || [];
+
+      const inventoryTable = document.getElementById("inventoryTable");
+      const searchInput = document.getElementById("searchInput");
+      const stockFilter = document.getElementById("stockFilter");
+      const noProducts = document.getElementById("noProducts");
+
+      // SAFE TEXT DISPLAY
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function (char) {
+          return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          }[char];
+        });
+      }
+
+      // GET MINIMUM STOCK
+
+      function getMinimumStock(product) {
+        return Number(product.minimumStock ?? product.minimum_stock ?? 10);
+      }
+
+      // GET PRODUCT STATUS
+
+      function getStockStatus(product) {
+        const quantity = Number(product.quantity) || 0;
+        const minimum = getMinimumStock(product);
+
+        if (quantity <= 0) {
+          return "out";
+        }
+
+        if (quantity <= minimum) {
+          return "low";
+        }
+
+        return "available";
+      }
+
+      // UPDATE SUMMARY CARDS
+
+      function updateSummary() {
+        let available = 0;
+        let low = 0;
+        let out = 0;
+
+        products.forEach(function (product) {
+          const status = getStockStatus(product);
+
+          if (status === "available") {
+            available++;
+          } else if (status === "low") {
+            low++;
+          } else {
+            out++;
+          }
+        });
+
+        document.getElementById("totalStock").innerText = products.length;
+        document.getElementById("availableStock").innerText = available;
+        document.getElementById("lowStock").innerText = low;
+        document.getElementById("outOfStock").innerText = out;
+      }
+
+      // DISPLAY INVENTORY
+
+      function displayInventory() {
+        inventoryTable.innerHTML = "";
+
+        const searchText = searchInput.value.toLowerCase().trim();
+        const selectedFilter = stockFilter.value;
+
+        let visibleCount = 0;
+
+        products.forEach(function (product, index) {
+          const name = String(product.name || "");
+          const category = String(product.category || "");
+          const id = String(product.id || "P" + (index + 1));
+
+          const quantity = Number(product.quantity) || 0;
+          const minimum = getMinimumStock(product);
+
+          const status = getStockStatus(product);
+
+          const matchesSearch =
+            name.toLowerCase().includes(searchText) ||
+            category.toLowerCase().includes(searchText) ||
+            id.toLowerCase().includes(searchText);
+
+          const matchesFilter =
+            selectedFilter === "all" || selectedFilter === status;
+
+          if (!matchesSearch || !matchesFilter) {
+            return;
+          }
+
+          visibleCount++;
+
+          let statusHTML = "";
+
+          if (status === "available") {
+            statusHTML = '<span class="stock-available">Available</span>';
+          } else if (status === "low") {
+            statusHTML = '<span class="pending">Low Stock</span>';
+          } else {
+            statusHTML = '<span class="stock-unavailable">Out of Stock</span>';
+          }
+
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+          <td>${escapeHTML(id)}</td>
+          <td>${escapeHTML(name)}</td>
+          <td>${escapeHTML(category)}</td>
+          <td>${quantity}</td>
+          <td>${minimum}</td>
+          <td>${statusHTML}</td>
+          <td>
+            <button
+              class="edit-btn"
+              type="button"
+              data-index="${index}"
+            >
+              Update
+            </button>
+          </td>
+        `;
+
+          inventoryTable.appendChild(row);
+        });
+
+        noProducts.style.display = visibleCount === 0 ? "block" : "none";
+
+        updateSummary();
+      }
+
+      // UPDATE PRODUCT QUANTITY
+
+      inventoryTable.addEventListener("click", function (event) {
+        if (!event.target.classList.contains("edit-btn")) {
+          return;
+        }
+
+        const index = Number(event.target.getAttribute("data-index"));
+        const product = products[index];
+
+        if (!product) {
+          return;
+        }
+
+        const newQuantity = prompt(
+          "Enter new stock quantity for " + product.name + ":",
+          product.quantity,
+        );
+
+        if (newQuantity === null) {
+          return;
+        }
+
+        if (
+          newQuantity.trim() === "" ||
+          !Number.isInteger(Number(newQuantity)) ||
+          Number(newQuantity) < 0
+        ) {
+          alert("Please enter a valid quantity (0 or more).");
+          return;
+        }
+
+        product.quantity = Number(newQuantity);
+
+        localStorage.setItem("ecoProducts", JSON.stringify(products));
+
+        alert("Stock quantity updated successfully!");
+
+        displayInventory();
+      });
+
+      // SEARCH BUTTON
+
+      document
+        .getElementById("searchButton")
+        .addEventListener("click", displayInventory);
+
+      // LIVE SEARCH
+
+      searchInput.addEventListener("input", displayInventory);
+
+      // STOCK FILTER
+
+      stockFilter.addEventListener("change", displayInventory);
+
+      // REFRESH WHEN ADMIN PRODUCTS CHANGE IN ANOTHER TAB
+
+      window.addEventListener("storage", function (event) {
+        if (event.key === "ecoProducts") {
+          products = JSON.parse(event.newValue) || [];
+
+          displayInventory();
+        }
+      });
+
+      // INITIAL DISPLAY
+
+      displayInventory();
+    </script>
+  </body>
+</html>

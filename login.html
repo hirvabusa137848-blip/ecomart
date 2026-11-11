@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoMart - Login</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      .login-container {
+        max-width: 420px;
+        margin: 60px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .login-container h2 {
+        text-align: center;
+        color: #23aaad;
+        margin-bottom: 10px;
+      }
+
+      .login-container p {
+        text-align: center;
+        color: #666;
+        margin-bottom: 25px;
+      }
+
+      .login-container label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: bold;
+      }
+
+      .login-container input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 18px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      .login-btn {
+        width: 100%;
+        padding: 12px;
+        background: #23aaad;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      .login-btn:hover {
+        background: #188b8e;
+      }
+
+      .register-link {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .register-link a {
+        color: #23aaad;
+        text-decoration: none;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>EcoMart</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="order.html">Orders</a>
+        <a href="cart.html">Cart</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </header>
+
+    <div class="login-container">
+      <h2>Welcome Back!</h2>
+      <p>Login to your EcoMart account</p>
+
+      <form id="loginForm">
+        <label>Email Address</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Enter your email"
+          required
+        />
+
+        <label>Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter your password"
+          required
+        />
+
+        <button type="submit" class="login-btn">Login</button>
+      </form>
+
+      <div class="register-link">
+        Don't have an account?
+        <a href="register.html">Register Here</a>
+      </div>
+    </div>
+
+    <footer>
+      <p>&copy; 2026 EcoMart. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          let email = document.getElementById("email").value;
+          let password = document.getElementById("password").value;
+
+          let users = JSON.parse(localStorage.getItem("ecoUsers")) || [];
+
+          let user = users.find(function (item) {
+            return item.email === email && item.password === password;
+          });
+
+          if (user) {
+            localStorage.setItem("ecoLoggedInUser", JSON.stringify(user));
+            alert("Login successful!");
+            window.location.href = "index.html";
+          } else {
+            alert("Invalid email or password. Please register first.");
+          }
+        });
+    </script>
+  </body>
+</html>

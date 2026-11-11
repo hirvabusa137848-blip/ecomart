@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Customers - EcoMart Admin</title>
+    <link rel="stylesheet" href="admin.css" />
+
+    <style>
+      .customer-controls {
+        display: flex;
+        gap: 12px;
+        margin: 20px 0;
+      }
+
+      .customer-controls input {
+        flex: 1;
+        padding: 11px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .customer-table {
+        width: 100%;
+        min-width: 950px;
+        border-collapse: collapse;
+      }
+
+      .customer-table th,
+      .customer-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .customer-table th {
+        background: #f3f8f3;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      .customer-btn {
+        padding: 7px 12px;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+        margin: 2px;
+      }
+
+      .view-btn {
+        background: #176b3a;
+      }
+
+      .block-btn {
+        background: #c0392b;
+      }
+
+      .activate-btn {
+        background: #176b3a;
+      }
+
+      .customer-details {
+        display: none;
+        background: white;
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+
+      .customer-details p {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .empty-message {
+        text-align: center;
+        padding: 25px;
+        color: #666;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="sidebar">
+      <h2>EcoMart</h2>
+      <p class="admin-label">ADMIN PANEL</p>
+
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="admin-products.html">Products</a>
+      <a href="admin-categories.html">Categories</a>
+      <a href="admin-orders.html">Orders</a>
+      <a href="admin-customers.html" class="active">Customers</a>
+      <a href="admin-inventory.html">Inventory</a>
+      <a href="admin-reviews.html">Reviews & Offers</a>
+
+      <a href="../index.html">View Website</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+    <div class="main-content">
+      <div class="top-header">
+        <div>
+          <h1>Manage Customers</h1>
+          <p>View and manage registered customers.</p>
+        </div>
+
+        <div class="profile">
+          <div class="profile-icon">A</div>
+          <div>
+            <strong>Admin</strong>
+            <p>Administrator</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUSTOMER STATISTICS -->
+
+      <div class="dashboard-cards">
+        <div class="dashboard-card">
+          <h3>Total Customers</h3>
+          <h2 id="totalCustomers">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Active Customers</h3>
+          <h2 id="activeCustomers">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>New Customers</h3>
+          <h2 id="newCustomers">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Blocked Customers</h3>
+          <h2 id="blockedCustomers">0</h2>
+        </div>
+      </div>
+
+      <!-- CUSTOMER LIST -->
+
+      <div class="dashboard-section">
+        <h2>Customer List</h2>
+
+        <div class="customer-controls">
+          <input
+            type="text"
+            id="searchCustomer"
+            placeholder="Search by customer name or email..."
+          />
+
+          <button type="button" class="admin-btn" onclick="displayCustomers()">
+            Search
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Customer ID</th>
+                <th>Customer Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Total Orders</th>
+                <th>Registration Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="customerTableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="emptyMessage" class="empty-message" style="display: none">
+          No registered customers found.
+        </div>
+      </div>
+
+      <!-- CUSTOMER DETAILS -->
+
+      <div class="customer-details" id="customerDetails">
+        <h2>Customer Details</h2>
+
+        <div id="customerDetailsContent"></div>
+
+        <button type="button" class="admin-btn" onclick="closeDetails()">
+          Close
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // LOAD CUSTOMERS
+
+      let customers = JSON.parse(localStorage.getItem("ecoCustomers")) || [];
+
+      let orders = JSON.parse(localStorage.getItem("ecoOrders")) || [];
+
+      // SAFE TEXT DISPLAY
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function (character) {
+          const characters = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;",
+          };
+
+          return characters[character];
+        });
+      }
+
+      // COUNT CUSTOMER ORDERS
+
+      function getOrderCount(customer) {
+        return orders.filter(function (order) {
+          return (
+            String(order.email || "").toLowerCase() ===
+            String(customer.email || "").toLowerCase()
+          );
+        }).length;
+      }
+
+      // UPDATE CUSTOMER STATISTICS
+
+      function updateStatistics() {
+        let active = 0;
+        let blocked = 0;
+        let newCount = 0;
+
+        customers.forEach(function (customer) {
+          if (customer.status === "Blocked") {
+            blocked++;
+          } else {
+            active++;
+          }
+
+          if (customer.registrationDate) {
+            let registrationDate = new Date(customer.registrationDate);
+
+            let days = (new Date() - registrationDate) / (1000 * 60 * 60 * 24);
+
+            if (!isNaN(days) && days >= 0 && days <= 30) {
+              newCount++;
+            }
+          }
+        });
+
+        document.getElementById("totalCustomers").innerText = customers.length;
+
+        document.getElementById("activeCustomers").innerText = active;
+
+        document.getElementById("blockedCustomers").innerText = blocked;
+
+        document.getElementById("newCustomers").innerText = newCount;
+      }
+
+      // DISPLAY CUSTOMERS
+
+      function displayCustomers() {
+        customers = JSON.parse(localStorage.getItem("ecoCustomers")) || [];
+
+        orders = JSON.parse(localStorage.getItem("ecoOrders")) || [];
+
+        updateStatistics();
+
+        let search = document
+          .getElementById("searchCustomer")
+          .value.toLowerCase()
+          .trim();
+
+        let table = document.getElementById("customerTableBody");
+
+        table.innerHTML = "";
+
+        let filteredCustomers = customers.filter(function (customer) {
+          let name = String(customer.name || "").toLowerCase();
+          let email = String(customer.email || "").toLowerCase();
+
+          return name.includes(search) || email.includes(search);
+        });
+
+        document.getElementById("emptyMessage").style.display =
+          filteredCustomers.length === 0 ? "block" : "none";
+
+        filteredCustomers.forEach(function (customer) {
+          let index = customers.indexOf(customer);
+
+          let customerId =
+            customer.customerId || customer.id || "CU" + (101 + index);
+
+          let phone = customer.phone || customer.mobile || "Not provided";
+
+          let date =
+            customer.registrationDate || customer.date || "Not available";
+
+          let status = customer.status || "Active";
+
+          let orderCount = getOrderCount(customer);
+
+          let statusHTML =
+            status === "Blocked"
+              ? '<span class="pending">Blocked</span>'
+              : '<span class="stock-available">Active</span>';
+
+          let actionHTML =
+            status === "Blocked"
+              ? '<button class="customer-btn activate-btn" onclick="changeStatus(' +
+                index +
+                ')">Activate</button>'
+              : '<button class="customer-btn block-btn" onclick="changeStatus(' +
+                index +
+                ')">Block</button>';
+
+          let row = document.createElement("tr");
+
+          row.innerHTML = `
+
+                    <td>${escapeHTML(customerId)}</td>
+
+                    <td>${escapeHTML(customer.name)}</td>
+
+                    <td>${escapeHTML(customer.email)}</td>
+
+                    <td>${escapeHTML(phone)}</td>
+
+                    <td>${orderCount}</td>
+
+                    <td>${escapeHTML(date)}</td>
+
+                    <td>${statusHTML}</td>
+
+                    <td>
+                        <button
+                            class="customer-btn view-btn"
+                            onclick="viewCustomer(${index})"
+                        >
+                            View
+                        </button>
+
+                        ${actionHTML}
+                    </td>
+
+                `;
+
+          table.appendChild(row);
+        });
+      }
+
+      // BLOCK OR ACTIVATE CUSTOMER
+
+      function changeStatus(index) {
+        let customer = customers[index];
+
+        if (customer.status === "Blocked") {
+          customer.status = "Active";
+        } else {
+          customer.status = "Blocked";
+        }
+
+        localStorage.setItem("ecoCustomers", JSON.stringify(customers));
+
+        alert("Customer status updated successfully!");
+
+        displayCustomers();
+      }
+
+      // VIEW CUSTOMER DETAILS
+
+      function viewCustomer(index) {
+        let customer = customers[index];
+
+        let customerId =
+          customer.customerId || customer.id || "CU" + (101 + index);
+
+        let phone = customer.phone || customer.mobile || "Not provided";
+
+        let date =
+          customer.registrationDate || customer.date || "Not available";
+
+        let orderCount = getOrderCount(customer);
+
+        document.getElementById("customerDetailsContent").innerHTML = `
+
+                <p><strong>Customer ID:</strong> ${escapeHTML(customerId)}</p>
+
+                <p><strong>Name:</strong> ${escapeHTML(customer.name)}</p>
+
+                <p><strong>Email:</strong> ${escapeHTML(customer.email)}</p>
+
+                <p><strong>Phone:</strong> ${escapeHTML(phone)}</p>
+
+                <p><strong>Total Orders:</strong> ${orderCount}</p>
+
+                <p><strong>Registration Date:</strong> ${escapeHTML(date)}</p>
+
+                <p><strong>Status:</strong> ${escapeHTML(customer.status || "Active")}</p>
+
+            `;
+
+        document.getElementById("customerDetails").style.display = "block";
+
+        document.getElementById("customerDetails").scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+
+      // CLOSE DETAILS
+
+      function closeDetails() {
+        document.getElementById("customerDetails").style.display = "none";
+      }
+
+      // SEARCH
+
+      document
+        .getElementById("searchCustomer")
+        .addEventListener("input", displayCustomers);
+
+      // LOAD PAGE
+
+      displayCustomers();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>EcoMart - Manage Products</title>
+
+    <link rel="stylesheet" href="admin.css" />
+
+    <style>
+      .product-table-container {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .product-table {
+        width: 100%;
+        min-width: 850px;
+        border-collapse: collapse;
+      }
+
+      .product-table th,
+      .product-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .product-table th {
+        background: #f3f8f3;
+      }
+
+      .product-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+      }
+
+      .product-actions {
+        display: flex;
+        gap: 5px;
+      }
+
+      .cancel-btn {
+        background: #777;
+        color: white;
+        padding: 9px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        display: none;
+        margin-left: 8px;
+      }
+
+      .empty-message {
+        text-align: center;
+        padding: 25px;
+        color: #666;
+      }
+
+      .product-form input,
+      .product-form select,
+      .product-form textarea {
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+      <h2>EcoMart</h2>
+      <p class="admin-label">ADMIN PANEL</p>
+
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="admin-products.html" class="active">Products</a>
+      <a href="admin-categories.html">Categories</a>
+      <a href="admin-orders.html">Orders</a>
+      <a href="admin-customers.html">Customers</a>
+      <a href="admin-inventory.html">Inventory</a>
+      <a href="admin-reviews.html">Reviews & Offers</a>
+      <a href="../index.html">View Website</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+
+    <div class="main-content">
+      <div class="top-header">
+        <div>
+          <h2>Manage Products</h2>
+          <p>Add, update and manage grocery products.</p>
+        </div>
+
+        <div class="profile">
+          <div class="profile-icon">A</div>
+
+          <div>
+            <h4>Administrator</h4>
+            <p>Admin</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCT SUMMARY -->
+
+      <div class="dashboard-cards">
+        <div class="dashboard-card">
+          <h3>Total Products</h3>
+          <h1 id="totalProducts">0</h1>
+          <p>Available products</p>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Categories</h3>
+          <h1 id="totalCategories">0</h1>
+          <p>Product categories</p>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>In Stock</h3>
+          <h1 id="inStock">0</h1>
+          <p>Products available</p>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Out of Stock</h3>
+          <h1 id="outOfStock">0</h1>
+          <p>Products unavailable</p>
+        </div>
+      </div>
+
+      <!-- ADD / EDIT PRODUCT -->
+
+      <div class="dashboard-section">
+        <h2 id="formTitle">Add New Product</h2>
+
+        <form class="product-form" id="productForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Product Name</label>
+
+              <input
+                type="text"
+                id="productName"
+                placeholder="Enter product name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Category</label>
+
+              <select id="category" required>
+                <option value="">Select Category</option>
+                <option>Fruits</option>
+                <option>Vegetables</option>
+                <option>Dairy</option>
+                <option>Snacks</option>
+                <option>Grains</option>
+                <option>Spices</option>
+                <option>Household</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Price (₹)</label>
+
+              <input
+                type="number"
+                id="price"
+                placeholder="Enter price"
+                min="0.01"
+                step="0.01"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Quantity</label>
+
+              <input
+                type="number"
+                id="quantity"
+                placeholder="Enter quantity"
+                min="0"
+                step="1"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Product Image</label>
+
+              <input type="file" id="productImage" accept="image/*" />
+              <small>Choose a small image file.</small>
+            </div>
+
+            <div class="form-group">
+              <label>Discount (%)</label>
+
+              <input
+                type="number"
+                id="discount"
+                placeholder="Enter discount"
+                min="0"
+                max="100"
+                value="0"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Product Description</label>
+
+            <textarea
+              id="description"
+              rows="3"
+              placeholder="Enter product description"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="admin-btn" id="submitBtn">
+            Add Product
+          </button>
+
+          <button
+            type="button"
+            class="cancel-btn"
+            id="cancelBtn"
+            onclick="cancelEdit()"
+          >
+            Cancel Edit
+          </button>
+        </form>
+      </div>
+
+      <!-- PRODUCT TABLE -->
+
+      <div class="dashboard-section">
+        <h2>Product List</h2>
+
+        <div class="product-search">
+          <input
+            type="text"
+            id="searchProduct"
+            placeholder="Search products..."
+          />
+
+          <button type="button" class="admin-btn" onclick="displayProducts()">
+            Search
+          </button>
+        </div>
+
+        <div class="product-table-container">
+          <table class="product-table">
+            <thead>
+              <tr>
+                <th>Product ID</th>
+                <th>Image</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="productTableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="emptyMessage" class="empty-message" style="display: none">
+          No products found.
+        </div>
+      </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+      // DEFAULT PRODUCTS
+
+      let defaultProducts = [
+        {
+          id: "P101",
+          name: "Fresh Apple",
+          category: "Fruits",
+          price: 120,
+          quantity: 50,
+          image: "../project_img8.webp",
+          discount: 0,
+          description: "Fresh and healthy apples.",
+        },
+
+        {
+          id: "P102",
+          name: "Fresh Potato",
+          category: "Vegetables",
+          price: 30,
+          quantity: 40,
+          image: "../potato.jpg",
+          discount: 0,
+          description: "Fresh potatoes.",
+        },
+
+        {
+          id: "P103",
+          name: "Fresh Milk",
+          category: "Dairy",
+          price: 54,
+          quantity: 25,
+          image: "../project_img10.webp",
+          discount: 0,
+          description: "Fresh dairy milk.",
+        },
+
+        {
+          id: "P104",
+          name: "Potato Wafers",
+          category: "Snacks",
+          price: 36,
+          quantity: 0,
+          image: "../project_img5.avif",
+          discount: 0,
+          description: "Crispy potato wafers.",
+        },
+
+        {
+          id: "P105",
+          name: "Premium Rice",
+          category: "Grains",
+          price: 320,
+          quantity: 30,
+          image: "../project_img11.jpg",
+          discount: 0,
+          description: "Premium quality rice.",
+        },
+      ];
+
+      // LOAD PRODUCTS
+
+      let savedProducts = localStorage.getItem("ecoProducts");
+
+      let products = savedProducts
+        ? JSON.parse(savedProducts)
+        : defaultProducts;
+
+      let editingIndex = -1;
+
+      // SAVE PRODUCTS
+
+      function saveProducts() {
+        localStorage.setItem("ecoProducts", JSON.stringify(products));
+      }
+
+      // SAFE TEXT DISPLAY
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function (character) {
+          const characters = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;",
+          };
+
+          return characters[character];
+        });
+      }
+
+      // UPDATE SUMMARY CARDS
+
+      function updateStatistics() {
+        let categories = new Set();
+
+        let inStock = 0;
+        let outOfStock = 0;
+
+        products.forEach(function (product) {
+          categories.add(product.category);
+
+          if (Number(product.quantity) > 0) {
+            inStock++;
+          } else {
+            outOfStock++;
+          }
+        });
+
+        document.getElementById("totalProducts").innerText = products.length;
+
+        document.getElementById("totalCategories").innerText = categories.size;
+
+        document.getElementById("inStock").innerText = inStock;
+
+        document.getElementById("outOfStock").innerText = outOfStock;
+      }
+
+      // DISPLAY PRODUCTS
+
+      function displayProducts() {
+        let search = document
+          .getElementById("searchProduct")
+          .value.toLowerCase()
+          .trim();
+
+        let table = document.getElementById("productTableBody");
+
+        table.innerHTML = "";
+
+        let filteredProducts = products.filter(function (product) {
+          return (
+            product.name.toLowerCase().includes(search) ||
+            product.category.toLowerCase().includes(search)
+          );
+        });
+
+        document.getElementById("emptyMessage").style.display =
+          filteredProducts.length === 0 ? "block" : "none";
+
+        filteredProducts.forEach(function (product) {
+          let index = products.indexOf(product);
+
+          let status =
+            Number(product.quantity) > 0
+              ? '<span class="stock-available">Available</span>'
+              : '<span class="stock-unavailable">Out of Stock</span>';
+
+          let image = product.image || "";
+
+          let row = document.createElement("tr");
+
+          row.innerHTML = `
+
+                    <td>${escapeHTML(product.id)}</td>
+
+                    <td>
+                        ${
+                          image
+                            ? `<img class="product-image" src="${escapeHTML(image)}" alt="${escapeHTML(product.name)}">`
+                            : "No Image"
+                        }
+                    </td>
+
+                    <td>${escapeHTML(product.name)}</td>
+
+                    <td>${escapeHTML(product.category)}</td>
+
+                    <td>₹${Number(product.price).toLocaleString("en-IN")}</td>
+
+                    <td>${Number(product.quantity)}</td>
+
+                    <td>${status}</td>
+
+                    <td>
+                        <div class="product-actions">
+
+                            <button
+                                type="button"
+                                class="edit-btn"
+                                onclick="editProduct(${index})"
+                            >
+                                Edit
+                            </button>
+
+                            <button
+                                type="button"
+                                class="delete-btn"
+                                onclick="deleteProduct(${index})"
+                            >
+                                Delete
+                            </button>
+
+                        </div>
+                    </td>
+
+                `;
+
+          table.appendChild(row);
+        });
+
+        updateStatistics();
+      }
+
+      // ADD OR UPDATE PRODUCT
+
+      document
+        .getElementById("productForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          let name = document.getElementById("productName").value.trim();
+
+          let category = document.getElementById("category").value;
+
+          let price = Number(document.getElementById("price").value);
+
+          let quantity = Number(document.getElementById("quantity").value);
+
+          let discount = Number(document.getElementById("discount").value);
+
+          let description = document.getElementById("description").value.trim();
+
+          let imageFile = document.getElementById("productImage").files[0];
+
+          if (
+            !name ||
+            !category ||
+            price <= 0 ||
+            quantity < 0 ||
+            discount < 0 ||
+            discount > 100
+          ) {
+            alert("Please enter valid product details.");
+
+            return;
+          }
+
+          // SAVE PRODUCT AFTER READING IMAGE
+
+          function saveProduct(image) {
+            let product;
+
+            if (editingIndex !== -1) {
+              product = products[editingIndex];
+
+              product.name = name;
+              product.category = category;
+              product.price = price;
+              product.quantity = quantity;
+              product.image = image || product.image;
+              product.discount = discount;
+              product.description = description;
+
+              alert("Product updated successfully!");
+            } else {
+              product = {
+                id: "P" + Date.now(),
+
+                name: name,
+
+                category: category,
+
+                price: price,
+
+                quantity: quantity,
+
+                image: image,
+
+                discount: discount,
+
+                description: description,
+              };
+
+              products.push(product);
+
+              alert("Product added successfully!");
+            }
+
+            saveProducts();
+
+            document.getElementById("productForm").reset();
+
+            cancelEdit();
+
+            displayProducts();
+          }
+
+          // READ IMAGE FILE
+
+          if (imageFile) {
+            if (imageFile.size > 500 * 1024) {
+              alert("Please select an image smaller than 500 KB.");
+
+              return;
+            }
+
+            let reader = new FileReader();
+
+            reader.onload = function () {
+              saveProduct(reader.result);
+            };
+
+            reader.readAsDataURL(imageFile);
+          } else {
+            saveProduct("");
+          }
+        });
+
+      // EDIT PRODUCT
+
+      function editProduct(index) {
+        let product = products[index];
+
+        editingIndex = index;
+
+        document.getElementById("productName").value = product.name;
+
+        document.getElementById("category").value = product.category;
+
+        document.getElementById("price").value = product.price;
+
+        document.getElementById("quantity").value = product.quantity;
+
+        document.getElementById("discount").value = product.discount || 0;
+
+        document.getElementById("description").value =
+          product.description || "";
+
+        document.getElementById("formTitle").innerText = "Edit Product";
+
+        document.getElementById("submitBtn").innerText = "Update Product";
+
+        document.getElementById("cancelBtn").style.display = "inline-block";
+
+        document.getElementById("productForm").scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+
+      // CANCEL EDIT
+
+      function cancelEdit() {
+        editingIndex = -1;
+
+        document.getElementById("productForm").reset();
+
+        document.getElementById("formTitle").innerText = "Add New Product";
+
+        document.getElementById("submitBtn").innerText = "Add Product";
+
+        document.getElementById("cancelBtn").style.display = "none";
+      }
+
+      // DELETE PRODUCT
+
+      function deleteProduct(index) {
+        let confirmDelete = confirm(
+          "Are you sure you want to delete this product?",
+        );
+
+        if (confirmDelete) {
+          products.splice(index, 1);
+
+          saveProducts();
+
+          if (editingIndex === index) {
+            cancelEdit();
+          }
+
+          displayProducts();
+
+          alert("Product deleted successfully!");
+        }
+      }
+
+      // SEARCH PRODUCTS
+
+      document
+        .getElementById("searchProduct")
+        .addEventListener("input", displayProducts);
+
+      // SAVE INITIAL PRODUCTS IF NOT ALREADY SAVED
+
+      if (!savedProducts) {
+        saveProducts();
+      }
+
+      // LOAD PAGE
+
+      displayProducts();
+
+      // REFRESH WHEN PRODUCT DATA CHANGES IN ANOTHER TAB
+
+      window.addEventListener("storage", function (event) {
+        if (event.key === "ecoProducts") {
+          products = JSON.parse(event.newValue) || [];
+
+          displayProducts();
+        }
+      });
+    </script>
+  </body>
+</html>

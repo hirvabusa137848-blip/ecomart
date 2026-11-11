@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>EcoMart - Checkout</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      .checkout-container {
+        width: 85%;
+        margin: 40px auto;
+      }
+
+      .checkout-title {
+        text-align: center;
+        color: #176b3a;
+        margin-bottom: 30px;
+      }
+
+      .checkout-content {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+      }
+
+      .checkout-form {
+        flex: 2;
+        min-width: 280px;
+        background: white;
+        padding: 25px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+      }
+
+      .checkout-form h2 {
+        color: #176b3a;
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 18px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: bold;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 15px;
+        box-sizing: border-box;
+      }
+
+      .form-group textarea {
+        height: 100px;
+        resize: vertical;
+      }
+
+      .payment-option {
+        padding: 15px;
+        background: #f3f8f3;
+        border-radius: 6px;
+        margin-bottom: 20px;
+      }
+
+      .order-summary {
+        flex: 1;
+        min-width: 230px;
+        height: fit-content;
+        padding: 25px;
+        background: #f3f8f3;
+        border-radius: 10px;
+      }
+
+      .order-summary h2 {
+        color: #176b3a;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 18px 0;
+      }
+
+      .place-order-btn {
+        width: 100%;
+        padding: 13px;
+        background: #176b3a;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .place-order-btn:hover {
+        background: #10532c;
+      }
+
+      .place-order-btn:disabled {
+        background: #999;
+        cursor: not-allowed;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        color: #176b3a;
+        text-decoration: none;
+      }
+
+      .empty-checkout {
+        text-align: center;
+        color: #b00020;
+        margin: 15px 0;
+      }
+
+      @media (max-width: 600px) {
+        .checkout-container {
+          width: 92%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+
+    <header>
+      <div class="logo">EcoMart</div>
+
+      <div class="search">
+        <input type="text" placeholder="Search for groceries..." />
+        <button type="button" onclick="window.location.href = 'shop.html'">
+          Search
+        </button>
+      </div>
+
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="order.html">Orders</a>
+        <a href="cart.html">Cart</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </header>
+
+    <!-- CHECKOUT -->
+
+    <div class="checkout-container">
+      <h1 class="checkout-title">Checkout</h1>
+
+      <div class="checkout-content">
+        <!-- CUSTOMER DETAILS -->
+
+        <div class="checkout-form">
+          <h2>Delivery Information</h2>
+
+          <form id="checkoutForm">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input
+                type="text"
+                id="name"
+                placeholder="Enter your full name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Mobile Number</label>
+              <input
+                type="tel"
+                id="phone"
+                placeholder="Enter 10 digit mobile number"
+                pattern="[0-9]{10}"
+                maxlength="10"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="address">Delivery Address</label>
+              <textarea
+                id="address"
+                placeholder="Enter your complete address"
+                required
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="city">City</label>
+              <input
+                type="text"
+                id="city"
+                placeholder="Enter your city"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="pincode">Pincode</label>
+              <input
+                type="text"
+                id="pincode"
+                placeholder="Enter 6 digit pincode"
+                pattern="[0-9]{6}"
+                maxlength="6"
+                required
+              />
+            </div>
+
+            <h2>Payment Method</h2>
+
+            <div class="payment-option">
+              <label>
+                <input
+                  type="radio"
+                  name="payment"
+                  value="Cash on Delivery"
+                  checked
+                />
+                Cash on Delivery
+              </label>
+            </div>
+
+            <button type="submit" class="place-order-btn" id="placeOrderBtn">
+              Place Order
+            </button>
+          </form>
+
+          <a href="cart.html" class="back-link"> Back to Cart </a>
+        </div>
+
+        <!-- ORDER SUMMARY -->
+
+        <div class="order-summary">
+          <h2>Order Summary</h2>
+
+          <div id="orderItems"></div>
+
+          <p class="empty-checkout" id="emptyMessage"></p>
+
+          <hr />
+
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="subtotal">₹0</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Delivery Charges</span>
+            <span id="delivery">₹0</span>
+          </div>
+
+          <hr />
+
+          <div class="summary-row">
+            <strong>Total Amount</strong>
+            <strong id="total">₹0</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+
+    <footer>
+      <h2>EcoMart</h2>
+      <p>Sustainable Grocery Shopping Website</p>
+      <p>Fresh products. Better choices. Happy shopping.</p>
+      <p>© 2026 EcoMart. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+      let cart = JSON.parse(localStorage.getItem("ecoCart")) || [];
+
+      let subtotal = 0;
+      let delivery = 0;
+      let total = 0;
+
+      // DISPLAY ORDER SUMMARY
+
+      function displayOrder() {
+        const orderItems = document.getElementById("orderItems");
+
+        orderItems.innerHTML = "";
+
+        subtotal = 0;
+
+        if (cart.length === 0) {
+          document.getElementById("emptyMessage").innerText =
+            "Your cart is empty!";
+
+          document.getElementById("placeOrderBtn").disabled = true;
+        } else {
+          document.getElementById("emptyMessage").innerText = "";
+
+          document.getElementById("placeOrderBtn").disabled = false;
+        }
+
+        cart.forEach(function (item) {
+          let itemTotal = Number(item.price) * Number(item.quantity);
+
+          subtotal += itemTotal;
+
+          orderItems.innerHTML += `
+                    <div class="summary-row">
+                        <span>${item.name} x ${item.quantity}</span>
+                        <span>₹${itemTotal}</span>
+                    </div>
+                `;
+        });
+
+        delivery = subtotal === 0 ? 0 : 30;
+
+        total = subtotal + delivery;
+
+        document.getElementById("subtotal").innerText = "₹" + subtotal;
+
+        document.getElementById("delivery").innerText = "₹" + delivery;
+
+        document.getElementById("total").innerText = "₹" + total;
+      }
+
+      // PLACE ORDER
+
+      document
+        .getElementById("checkoutForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          if (cart.length === 0) {
+            alert("Your cart is empty!");
+
+            window.location.href = "shop.html";
+
+            return;
+          }
+
+          // CUSTOMER DETAILS
+
+          let name = document.getElementById("name").value;
+
+          let phone = document.getElementById("phone").value;
+
+          let email = document.getElementById("email").value;
+
+          let address = document.getElementById("address").value;
+
+          let city = document.getElementById("city").value;
+
+          let pincode = document.getElementById("pincode").value;
+
+          // PAYMENT METHOD
+
+          let payment = document.querySelector(
+            'input[name="payment"]:checked',
+          ).value;
+
+          // CREATE ORDER
+
+          let order = {
+            orderId: "ECM" + Date.now(),
+
+            name: name,
+
+            phone: phone,
+
+            email: email,
+
+            address: address,
+
+            city: city,
+
+            pincode: pincode,
+
+            payment: payment,
+
+            products: cart,
+
+            subtotal: subtotal,
+
+            delivery: delivery,
+
+            total: total,
+
+            status: "Order Placed",
+
+            date: new Date().toLocaleString(),
+          };
+
+          // SAVE LATEST ORDER
+
+          localStorage.setItem("ecoOrder", JSON.stringify(order));
+
+          // SAVE ORDER HISTORY
+
+          let orders = JSON.parse(localStorage.getItem("ecoOrders")) || [];
+
+          orders.push(order);
+
+          localStorage.setItem("ecoOrders", JSON.stringify(orders));
+
+          // CLEAR CART
+
+          localStorage.removeItem("ecoCart");
+
+          alert("Your order has been placed successfully!");
+
+          // GO TO ORDER PAGE
+
+          window.location.href = "order.html";
+        });
+
+      // LOAD ORDER SUMMARY
+
+      displayOrder();
+    </script>
+  </body>
+</html>

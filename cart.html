@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoMart - Shopping Cart</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      .cart-container {
+        width: 85%;
+        margin: 40px auto;
+      }
+
+      .cart-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #176b3a;
+      }
+
+      .cart-content {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+      }
+
+      .cart-items {
+        flex: 2;
+        min-width: 280px;
+      }
+
+      .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+        margin-bottom: 15px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+      }
+
+      .cart-item img {
+        width: 90px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+
+      .item-details {
+        flex: 1;
+      }
+
+      .item-details h3 {
+        margin-bottom: 8px;
+      }
+
+      .quantity button {
+        padding: 5px 12px;
+        cursor: pointer;
+        border: none;
+        background: #176b3a;
+        color: white;
+        border-radius: 4px;
+      }
+
+      .quantity span {
+        margin: 0 10px;
+      }
+
+      .remove-btn {
+        background: #d9534f;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .cart-summary {
+        flex: 1;
+        min-width: 230px;
+        height: fit-content;
+        padding: 25px;
+        background: #f3f8f3;
+        border-radius: 10px;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 15px 0;
+      }
+
+      .checkout-btn {
+        width: 100%;
+        padding: 12px;
+        background: #176b3a;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      .checkout-btn:hover {
+        background: #10532c;
+      }
+
+      .empty-cart {
+        text-align: center;
+        padding: 40px;
+      }
+
+      .empty-cart a {
+        color: #176b3a;
+      }
+
+      @media (max-width: 600px) {
+        .cart-item {
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+
+    <header>
+      <div class="logo">EcoMart</div>
+
+      <div class="search">
+        <input type="text" placeholder="Search for groceries..." />
+        <button>Search</button>
+      </div>
+
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="order.html">Orders</a>
+        <a href="cart.html">Cart</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </header>
+
+    <!-- CART SECTION -->
+
+    <div class="cart-container">
+      <h1 class="cart-title">My Shopping Cart</h1>
+
+      <div class="cart-content">
+        <div class="cart-items" id="cartItems">
+          <!-- Products will appear here -->
+        </div>
+
+        <div class="cart-summary">
+          <h2>Order Summary</h2>
+
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="subtotal">₹0</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Delivery Charges</span>
+            <span id="delivery">₹0</span>
+          </div>
+
+          <hr />
+
+          <div class="summary-row">
+            <strong>Total Amount</strong>
+            <strong id="total">₹0</strong>
+          </div>
+
+          <button class="checkout-btn" onclick="checkout()">
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+
+    <footer>
+      <h2>EcoMart</h2>
+      <p>Sustainable Grocery Shopping Website</p>
+      <p>Fresh products. Better choices. Happy shopping.</p>
+      <p>© 2026 EcoMart. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+      let cart = JSON.parse(localStorage.getItem("ecoCart")) || [];
+
+      function displayCart() {
+        let cartItems = document.getElementById("cartItems");
+
+        cartItems.innerHTML = "";
+
+        if (cart.length === 0) {
+          cartItems.innerHTML = `
+                    <div class="empty-cart">
+                        <h2>Your Cart is Empty</h2>
+                        <p>Add some products to start shopping.</p>
+                        <a href="shop.html">Continue Shopping</a>
+                    </div>
+                `;
+
+          updateTotal();
+          return;
+        }
+
+        cart.forEach((item, index) => {
+          cartItems.innerHTML += `
+                    <div class="cart-item">
+
+                        <img src="${item.image}" alt="${item.name}">
+
+                        <div class="item-details">
+
+                            <h3>${item.name}</h3>
+
+                            <p>₹${item.price}</p>
+
+                            <div class="quantity">
+
+                                <button onclick="changeQuantity(${index}, -1)">-</button>
+
+                                <span>${item.quantity}</span>
+
+                                <button onclick="changeQuantity(${index}, 1)">+</button>
+
+                            </div>
+
+                            <button class="remove-btn"
+                                onclick="removeItem(${index})">
+                                Remove
+                            </button>
+
+                        </div>
+
+                    </div>
+                `;
+        });
+
+        updateTotal();
+      }
+
+      function changeQuantity(index, change) {
+        cart[index].quantity += change;
+
+        if (cart[index].quantity <= 0) {
+          cart.splice(index, 1);
+        }
+
+        saveCart();
+      }
+
+      function removeItem(index) {
+        cart.splice(index, 1);
+
+        saveCart();
+      }
+
+      function updateTotal() {
+        let subtotal = 0;
+
+        cart.forEach((item) => {
+          subtotal += item.price * item.quantity;
+        });
+
+        let delivery = subtotal === 0 ? 0 : 30;
+
+        document.getElementById("subtotal").innerText = "₹" + subtotal;
+
+        document.getElementById("delivery").innerText = "₹" + delivery;
+
+        document.getElementById("total").innerText =
+          "₹" + (subtotal + delivery);
+      }
+
+      function saveCart() {
+        localStorage.setItem("ecoCart", JSON.stringify(cart));
+
+        displayCart();
+      }
+
+      function checkout() {
+        if (cart.length === 0) {
+          alert("Your cart is empty!");
+        } else {
+          window.location.href = "checkout.html";
+        }
+      }
+
+      displayCart();
+    </script>
+  </body>
+</html>

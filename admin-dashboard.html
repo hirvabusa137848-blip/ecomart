@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>EcoMart - Admin Dashboard</title>
+
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+
+  <body>
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+      <h2>EcoMart</h2>
+      <p class="admin-label">ADMIN PANEL</p>
+
+      <a href="admin-dashboard.html" class="active">Dashboard</a>
+      <a href="admin-products.html">Products</a>
+      <a href="admin-categories.html">Categories</a>
+      <a href="admin-orders.html">Orders</a>
+      <a href="admin-customers.html">Customers</a>
+      <a href="admin-inventory.html">Inventory</a>
+      <a href="admin-reviews.html">Reviews & Offers</a>
+      <a href="../index.html">View Website</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+
+    <div class="main-content">
+      <!-- TOP HEADER -->
+
+      <div class="top-header">
+        <div>
+          <h2>Dashboard</h2>
+          <p>Welcome back, Admin!</p>
+        </div>
+
+        <div class="profile">
+          <div class="profile-icon">A</div>
+          <div>
+            <h4>Administrator</h4>
+            <p>Admin</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUMMARY CARDS -->
+
+      <div class="dashboard-cards">
+        <div class="dashboard-card">
+          <h3>Total Products</h3>
+          <h1>89</h1>
+          <p>Products available</p>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Total Orders</h3>
+          <h1>120</h1>
+          <p>Orders received</p>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Total Customers</h3>
+          <h1>250</h1>
+          <p>Registered customers</p>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Total Revenue</h3>
+          <h1>₹45,800</h1>
+          <p>Overall sales</p>
+        </div>
+      </div>
+
+      <!-- SALES OVERVIEW -->
+
+      <div class="dashboard-section">
+        <h2>Sales Overview</h2>
+
+        <div class="sales-box">
+          <div class="sales-item">
+            <p>Monday</p>
+            <div class="bar" style="height: 70px"></div>
+          </div>
+
+          <div class="sales-item">
+            <p>Tuesday</p>
+            <div class="bar" style="height: 110px"></div>
+          </div>
+
+          <div class="sales-item">
+            <p>Wednesday</p>
+            <div class="bar" style="height: 85px"></div>
+          </div>
+
+          <div class="sales-item">
+            <p>Thursday</p>
+            <div class="bar" style="height: 140px"></div>
+          </div>
+
+          <div class="sales-item">
+            <p>Friday</p>
+            <div class="bar" style="height: 100px"></div>
+          </div>
+
+          <div class="sales-item">
+            <p>Saturday</p>
+            <div class="bar" style="height: 160px"></div>
+          </div>
+
+          <div class="sales-item">
+            <p>Sunday</p>
+            <div class="bar" style="height: 120px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT ORDERS -->
+
+      <div class="dashboard-section">
+        <h2>Recent Orders</h2>
+
+        <table>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+
+          <tr>
+            <td>#EM101</td>
+            <td>Rahul Patel</td>
+            <td>11 Nov 2026</td>
+            <td>₹850</td>
+            <td><span class="delivered">Delivered</span></td>
+          </tr>
+
+          <tr>
+            <td>#EM102</td>
+            <td>Priya Shah</td>
+            <td>11 Nov 2026</td>
+            <td>₹620</td>
+            <td><span class="pending">Pending</span></td>
+          </tr>
+
+          <tr>
+            <td>#EM103</td>
+            <td>Amit Joshi</td>
+            <td>10 Nov 2026</td>
+            <td>₹1,200</td>
+            <td><span class="processing">Processing</span></td>
+          </tr>
+
+          <tr>
+            <td>#EM104</td>
+            <td>Neha Mehta</td>
+            <td>10 Nov 2026</td>
+            <td>₹450</td>
+            <td><span class="delivered">Delivered</span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

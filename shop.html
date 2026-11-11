@@ -1,0 +1,1430 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoMart - Shop</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      .shop-filter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 1200px;
+        background: #f5f9f5;
+        border-radius: 8px;
+      }
+
+      .shop-filter select {
+        padding: 10px 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 15px;
+        cursor: pointer;
+      }
+
+      .no-products {
+        display: none;
+        text-align: center;
+        padding: 25px;
+        font-size: 18px;
+        color: #555;
+      }
+
+      .category-card {
+        cursor: pointer;
+      }
+
+      .review-form {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 25px;
+        background: #f5f9f5;
+        border-radius: 8px;
+      }
+
+      .review-form label {
+        display: block;
+        margin: 12px 0 6px;
+        font-weight: 600;
+      }
+
+      .review-form input,
+      .review-form select,
+      .review-form textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 15px;
+        box-sizing: border-box;
+      }
+
+      .review-form button {
+        margin-top: 18px;
+        padding: 12px 22px;
+        background: #176b3a;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .approved-reviews {
+        max-width: 800px;
+        margin: 25px auto;
+      }
+
+      .review-item {
+        padding: 18px;
+        margin-bottom: 15px;
+        background: #f5f9f5;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+
+    <header>
+      <div class="logo">EcoMart</div>
+
+      <div class="search">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search for groceries..."
+        />
+        <button type="button" id="searchButton">Search</button>
+      </div>
+
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="order.html">Orders</a>
+        <a href="cart.html">Cart</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </header>
+
+    <!-- SHOP BANNER -->
+
+    <section class="page-banner">
+      <h1>Shop Groceries</h1>
+      <p>
+        Discover fresh, affordable and quality products for your everyday needs.
+      </p>
+    </section>
+
+    <!-- CATEGORIES -->
+
+    <section class="section">
+      <div class="section-title">
+        <h2>Shop by Category</h2>
+        <p>Explore our grocery categories</p>
+      </div>
+
+      <div class="category-grid">
+        <div class="category-card" data-category="Fruits">
+          <img src="project_img2.jpg" alt="Fruits" />
+          <h3>Fruits</h3>
+        </div>
+
+        <div class="category-card" data-category="Vegetables">
+          <img src="project_img3.jpg" alt="Vegetables" />
+          <h3>Vegetables</h3>
+        </div>
+
+        <div class="category-card" data-category="Dairy">
+          <img src="project_img4.jpg" alt="Dairy" />
+          <h3>Dairy</h3>
+        </div>
+
+        <div class="category-card" data-category="Snacks">
+          <img src="project_img5.avif" alt="Snacks" />
+          <h3>Snacks</h3>
+        </div>
+
+        <div class="category-card" data-category="Grains">
+          <img src="project_img6.jpeg" alt="Grains" />
+          <h3>Grains</h3>
+        </div>
+
+        <div class="category-card" data-category="Spices">
+          <img
+            src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500"
+            alt="Spices"
+          />
+          <h3>Spices</h3>
+        </div>
+
+        <div class="category-card" data-category="Household">
+          <img src="project_img7.avif" alt="Household" />
+          <h3>Household</h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCT FILTERS -->
+
+    <section class="shop-filter">
+      <select id="productCategory">
+        <option value="all">All Categories</option>
+        <option value="Fruits">Fruits</option>
+        <option value="Vegetables">Vegetables</option>
+        <option value="Dairy">Dairy</option>
+        <option value="Snacks">Snacks</option>
+        <option value="Grains">Grains</option>
+        <option value="Spices">Spices</option>
+        <option value="Household">Household</option>
+      </select>
+
+      <select id="sortProducts">
+        <option value="default">Sort Products</option>
+        <option value="low">Price: Low to High</option>
+        <option value="high">Price: High to Low</option>
+      </select>
+    </section>
+
+    <p class="no-products" id="noProducts">
+      No products found. Please try another search.
+    </p>
+
+    <!-- FRUITS -->
+
+    <section class="section product-section" data-category="Fruits">
+      <div class="section-title">
+        <h2>Fresh Fruits</h2>
+        <p>Enjoy fresh and juicy fruits every day</p>
+      </div>
+
+      <div class="product-grid">
+        <div class="product-card">
+          <img src="project_img8.webp" alt="Apple" />
+          <p class="discount">20% OFF</p>
+          <h3>Fresh Apple</h3>
+          <p>1 kg</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹120</p>
+          <p class="old-price">₹150</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="banana.jpeg" alt="Banana" />
+          <p class="discount">15% OFF</p>
+          <h3>Fresh Banana</h3>
+          <p>1 dozen</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹55</p>
+          <p class="old-price">₹65</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="project_img9.webp" alt="Mango" />
+          <p class="discount">25% OFF</p>
+          <h3>Fresh Mango</h3>
+          <p>1 kg</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹150</p>
+          <p class="old-price">₹200</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="orange.jpg" alt="Orange" />
+          <p class="discount">15% OFF</p>
+          <h3>Fresh Orange</h3>
+          <p>1 kg</p>
+          <p class="rating">★★★★☆</p>
+          <p class="price">₹85</p>
+          <p class="old-price">₹100</p>
+          <button class="add-btn">ADD</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VEGETABLES -->
+
+    <section class="section product-section" data-category="Vegetables">
+      <div class="section-title">
+        <h2>Fresh Vegetables</h2>
+        <p>Fresh vegetables for healthy meals</p>
+      </div>
+
+      <div class="product-grid">
+        <div class="product-card">
+          <img src="potato.jpg" alt="Potato" />
+          <p class="discount">15% OFF</p>
+          <h3>Fresh Potato</h3>
+          <p>1 kg</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹30</p>
+          <p class="old-price">₹35</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="onion.jpg" alt="Onion" />
+          <p class="discount">10% OFF</p>
+          <h3>Red Onion</h3>
+          <p>1 kg</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹36</p>
+          <p class="old-price">₹40</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="tomato.jpeg" alt="Tomato" />
+          <p class="discount">10% OFF</p>
+          <h3>Fresh Tomato</h3>
+          <p>1 kg</p>
+          <p class="rating">★★★★☆</p>
+          <p class="price">₹40</p>
+          <p class="old-price">₹45</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="carrots.avif" alt="Carrot" />
+          <p class="discount">15% OFF</p>
+          <h3>Fresh Carrot</h3>
+          <p>500 g</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹34</p>
+          <p class="old-price">₹40</p>
+          <button class="add-btn">ADD</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- DAIRY -->
+
+    <section class="section product-section" data-category="Dairy">
+      <div class="section-title">
+        <h2>Dairy Products</h2>
+        <p>Fresh dairy products for your family</p>
+      </div>
+
+      <div class="product-grid">
+        <div class="product-card">
+          <img src="project_img10.webp" alt="Milk" />
+          <p class="discount">10% OFF</p>
+          <h3>Fresh Milk</h3>
+          <p>1 litre</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹54</p>
+          <p class="old-price">₹60</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="cheese.webp" alt="Cheese" />
+          <p class="discount">10% OFF</p>
+          <h3>Cheese</h3>
+          <p>200 g</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹135</p>
+          <p class="old-price">₹150</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="butter.webp" alt="Butter" />
+          <p class="discount">10% OFF</p>
+          <h3>Salted Butter</h3>
+          <p>100 g</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹54</p>
+          <p class="old-price">₹60</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="curd.jpg" alt="Curd" />
+          <p class="discount">5% OFF</p>
+          <h3>Fresh Curd</h3>
+          <p>500 g</p>
+          <p class="rating">★★★★☆</p>
+          <p class="price">₹47</p>
+          <p class="old-price">₹50</p>
+          <button class="add-btn">ADD</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SNACKS -->
+
+    <section class="section product-section" data-category="Snacks">
+      <div class="section-title">
+        <h2>Snacks</h2>
+        <p>Tasty snacks for your everyday cravings</p>
+      </div>
+
+      <div class="product-grid">
+        <div class="product-card">
+          <img
+            src="https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500"
+            alt="Wafers"
+          />
+          <p class="discount">10% OFF</p>
+          <h3>Potato Wafers</h3>
+          <p>150 g</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹36</p>
+          <p class="old-price">₹40</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img
+            src="https://images.unsplash.com/photo-1578849278619-e73505e9610f?w=500"
+            alt="Popcorn"
+          />
+          <p class="discount">10% OFF</p>
+          <h3>Salted Popcorn</h3>
+          <p>100 g</p>
+          <p class="rating">★★★★☆</p>
+          <p class="price">₹45</p>
+          <p class="old-price">₹50</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img
+            src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=500"
+            alt="Biscuits"
+          />
+          <p class="discount">10% OFF</p>
+          <h3>Butter Biscuits</h3>
+          <p>200 g</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹45</p>
+          <p class="old-price">₹50</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="milkchocolate.jpg" alt="Chocolate" />
+          <p class="discount">15% OFF</p>
+          <h3>Milk Chocolate</h3>
+          <p>100 g</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹85</p>
+          <p class="old-price">₹100</p>
+          <button class="add-btn">ADD</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRAINS -->
+
+    <section class="section product-section" data-category="Grains">
+      <div class="section-title">
+        <h2>Grains</h2>
+        <p>Quality grains and kitchen essentials</p>
+      </div>
+
+      <div class="product-grid">
+        <div class="product-card">
+          <img src="project_img11.jpg" alt="Rice" />
+          <p class="discount">20% OFF</p>
+          <h3>Premium Rice</h3>
+          <p>5 kg</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹320</p>
+          <p class="old-price">₹400</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img
+            src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500"
+            alt="Wheat Flour"
+          />
+          <p class="discount">10% OFF</p>
+          <h3>Wheat Flour</h3>
+          <p>5 kg</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹270</p>
+          <p class="old-price">₹300</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="oats.jpg" alt="Oats" />
+          <p class="discount">15% OFF</p>
+          <h3>Healthy Oats</h3>
+          <p>500 g</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹102</p>
+          <p class="old-price">₹120</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="ragiflour.jpg" alt="Ragi Flour" />
+          <p class="discount">10% OFF</p>
+          <h3>Ragi Flour</h3>
+          <p>1 kg</p>
+          <p class="rating">★★★★☆</p>
+          <p class="price">₹72</p>
+          <p class="old-price">₹80</p>
+          <button class="add-btn">ADD</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPICES -->
+
+    <section class="section product-section" data-category="Spices">
+      <div class="section-title">
+        <h2>Spices</h2>
+        <p>Add flavour to your everyday cooking</p>
+      </div>
+
+      <div class="product-grid">
+        <div class="product-card">
+          <img src="turmeric.jpg" alt="Turmeric" />
+          <p class="discount">10% OFF</p>
+          <h3>Turmeric Powder</h3>
+          <p>200 g</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹54</p>
+          <p class="old-price">₹60</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="chilli.jpeg" alt="Chilli Powder" />
+          <p class="discount">10% OFF</p>
+          <h3>Chilli Powder</h3>
+          <p>200 g</p>
+          <p class="rating">★★★★☆</p>
+          <p class="price">₹63</p>
+          <p class="old-price">₹70</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="cuminseeds.jpeg" alt="Cumin Seeds" />
+          <p class="discount">10% OFF</p>
+          <h3>Cumin Seeds</h3>
+          <p>100 g</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹45</p>
+          <p class="old-price">₹50</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="mustardseed.jpg" alt="Mustard Seeds" />
+          <p class="discount">10% OFF</p>
+          <h3>Mustard Seeds</h3>
+          <p>100 g</p>
+          <p class="rating">★★★★☆</p>
+          <p class="price">₹27</p>
+          <p class="old-price">₹30</p>
+          <button class="add-btn">ADD</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOUSEHOLD -->
+
+    <section class="section product-section" data-category="Household">
+      <div class="section-title">
+        <h2>Household Products</h2>
+        <p>Useful essentials for your home</p>
+      </div>
+
+      <div class="product-grid">
+        <div class="product-card">
+          <img src="handwash.jpg" alt="Handwash" />
+          <p class="discount">10% OFF</p>
+          <h3>Liquid Handwash</h3>
+          <p>250 ml</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹72</p>
+          <p class="old-price">₹80</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="dishwasg.jpg" alt="Dishwashing Liquid" />
+          <p class="discount">10% OFF</p>
+          <h3>Dishwashing Liquid</h3>
+          <p>500 ml</p>
+          <p class="rating">★★★★★</p>
+          <p class="price">₹90</p>
+          <p class="old-price">₹100</p>
+          <button class="add-btn">ADD</button>
+        </div>
+
+        <div class="product-card">
+          <img src="trashbag.webp" alt="Trash Bags" />
+          <p class="discount">10% OFF</p>
+          <h3>Trash Bags</h3>
+          <p>Pack of 30</p>
+          <p class="rating">★★★★☆</p>
+          <p class="price">₹90</p>
+          <p class="old-price">₹100</p>
+          <button class="add-btn">ADD</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CUSTOMER REVIEWS -->
+
+    <section class="section" id="customer-reviews">
+      <div class="section-title">
+        <h2>Customer Reviews</h2>
+        <p>Share your shopping experience with us</p>
+      </div>
+
+      <div class="review-form">
+        <form id="reviewForm">
+          <label for="reviewName">Your Name</label>
+          <input
+            type="text"
+            id="reviewName"
+            placeholder="Enter your name"
+            required
+          />
+
+          <label for="reviewProduct">Select Product</label>
+          <select id="reviewProduct" required>
+            <option value="">Select a product</option>
+          </select>
+
+          <label for="reviewRating">Rating</label>
+          <select id="reviewRating" required>
+            <option value="">Select rating</option>
+            <option value="5">5 - Excellent</option>
+            <option value="4">4 - Very Good</option>
+            <option value="3">3 - Good</option>
+            <option value="2">2 - Average</option>
+            <option value="1">1 - Poor</option>
+          </select>
+
+          <label for="reviewText">Your Review</label>
+          <textarea
+            id="reviewText"
+            rows="4"
+            placeholder="Write your experience..."
+            required
+          ></textarea>
+
+          <button type="submit">Submit Review</button>
+        </form>
+      </div>
+
+      <div id="approvedReviews" class="approved-reviews"></div>
+    </section>
+
+    <!-- FOOTER -->
+
+    <footer>
+      <h2>EcoMart</h2>
+      <p>Sustainable Grocery Shopping Website</p>
+      <p>Fresh products. Better choices. Happy shopping.</p>
+      <p>© 2026 EcoMart. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+        const searchButton = document.getElementById("searchButton");
+        const categorySelect = document.getElementById("productCategory");
+        const sortSelect = document.getElementById("sortProducts");
+        const noProducts = document.getElementById("noProducts");
+        const categoryGrid = document.querySelector(".category-grid");
+
+        const originalCategoryHTML = categoryGrid.innerHTML;
+        const defaultCategoryImages = {};
+
+        categoryGrid
+          .querySelectorAll(".category-card")
+          .forEach(function (card) {
+            defaultCategoryImages[card.dataset.category.toLowerCase()] =
+              card.querySelector("img")?.getAttribute("src") || "";
+          });
+
+        let selectedCategory = "all";
+        let ecoProducts = [];
+        let ecoOffers = [];
+
+        // Read data safely from localStorage
+        function getStoredData(key) {
+          try {
+            return JSON.parse(localStorage.getItem(key)) || [];
+          } catch (error) {
+            return [];
+          }
+        }
+
+        // Today's date
+        function todayDate() {
+          const today = new Date();
+
+          const year = today.getFullYear();
+          const month = String(today.getMonth() + 1).padStart(2, "0");
+          const day = String(today.getDate()).padStart(2, "0");
+
+          return year + "-" + month + "-" + day;
+        }
+
+        // Convert admin image paths for customer Shop page
+        function normalizeImagePath(image) {
+          if (!image) return "";
+
+          while (image.startsWith("../")) {
+            image = image.substring(3);
+          }
+
+          return image;
+        }
+
+        // Prevent HTML injection
+        function escapeHTML(value) {
+          return String(value ?? "").replace(/[&<>"']/g, function (char) {
+            return {
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[char];
+          });
+        }
+
+        // Get old products from existing Shop HTML
+        function getOldShopProducts() {
+          const oldProducts = [];
+
+          document
+            .querySelectorAll(".product-section")
+            .forEach(function (section) {
+              const category = section.getAttribute("data-category");
+
+              section
+                .querySelectorAll(".product-card")
+                .forEach(function (card) {
+                  const name = card.querySelector("h3")?.innerText.trim();
+
+                  const priceText =
+                    card.querySelector(".price")?.innerText || "0";
+
+                  const oldPriceText =
+                    card.querySelector(".old-price")?.innerText || "";
+
+                  const image =
+                    card.querySelector("img")?.getAttribute("src") || "";
+
+                  const discountText =
+                    card.querySelector(".discount")?.innerText || "0";
+
+                  const price = Number(priceText.replace(/[^\d.]/g, ""));
+                  const oldPrice = Number(oldPriceText.replace(/[^\d.]/g, ""));
+                  const discount = Number(discountText.replace(/[^\d.]/g, ""));
+
+                  if (name && price > 0) {
+                    oldProducts.push({
+                      id: "SHOP" + Date.now() + Math.random(),
+                      name: name,
+                      category: category,
+                      price: price,
+                      oldPrice: oldPrice,
+                      quantity: 20,
+                      image: normalizeImagePath(image),
+                      discount: discount,
+                      description: "Fresh grocery product",
+                    });
+                  }
+                });
+            });
+
+          return oldProducts;
+        }
+
+        // Check whether a category is active in Admin Categories
+        function isCategoryActive(categoryName) {
+          const savedCategories = localStorage.getItem("ecoCategories");
+
+          // If Admin Categories has not been initialized, show all categories
+          if (savedCategories === null) {
+            return true;
+          }
+
+          const categories = getStoredData("ecoCategories");
+
+          return categories.some(function (category) {
+            return (
+              String(category.name).toLowerCase() ===
+                String(categoryName).toLowerCase() &&
+              String(category.status || "Active").toLowerCase() === "active"
+            );
+          });
+        }
+
+        // Display categories from Admin Categories
+        function renderCategoryCards() {
+          const savedCategories = localStorage.getItem("ecoCategories");
+
+          // Use original categories if Admin Categories has not been initialized
+          if (savedCategories === null) {
+            categoryGrid.innerHTML = originalCategoryHTML;
+            return;
+          }
+
+          const categories = getStoredData("ecoCategories");
+
+          const activeCategories = categories.filter(function (category) {
+            return (
+              String(category.status || "Active").toLowerCase() === "active"
+            );
+          });
+
+          categoryGrid.innerHTML = "";
+
+          activeCategories.forEach(function (category) {
+            const name = category.name;
+
+            const image =
+              normalizeImagePath(category.image) ||
+              defaultCategoryImages[String(name).toLowerCase()] ||
+              "project_img1.jpg";
+
+            const card = document.createElement("div");
+
+            card.className = "category-card";
+            card.setAttribute("data-category", name);
+
+            card.innerHTML = `
+                <img
+                    src="${escapeHTML(image)}"
+                    alt="${escapeHTML(name)}"
+                    onerror="this.style.display='none'"
+                >
+                <h3>${escapeHTML(name)}</h3>
+            `;
+
+            categoryGrid.appendChild(card);
+          });
+        }
+
+        // Update category dropdown
+        function updateCategoryDropdown() {
+          let categories = [];
+
+          if (localStorage.getItem("ecoCategories") !== null) {
+            const adminCategories = getStoredData("ecoCategories");
+
+            categories = adminCategories
+              .filter(function (category) {
+                return (
+                  String(category.status || "Active").toLowerCase() === "active"
+                );
+              })
+              .map(function (category) {
+                return category.name;
+              });
+          } else {
+            categories = Array.from(
+              categoryGrid.querySelectorAll(".category-card"),
+            ).map(function (card) {
+              return card.dataset.category;
+            });
+
+            ecoProducts.forEach(function (product) {
+              if (product.category) {
+                categories.push(product.category);
+              }
+            });
+          }
+
+          categorySelect.innerHTML =
+            '<option value="all">All Categories</option>';
+
+          const uniqueCategories = [
+            ...new Set(
+              categories.filter(Boolean).map(function (category) {
+                return String(category);
+              }),
+            ),
+          ];
+
+          uniqueCategories.forEach(function (category) {
+            const option = document.createElement("option");
+
+            option.value = category;
+            option.textContent = category;
+
+            categorySelect.appendChild(option);
+          });
+        }
+
+        // Find active offer for a product
+        function getProductOffer(product) {
+          return ecoOffers.find(function (offer) {
+            return (
+              String(offer.productId) === String(product.id) &&
+              offer.endDate >= todayDate()
+            );
+          });
+        }
+
+        // Calculate product price
+        function getProductPrice(product) {
+          const basePrice = Number(product.price) || 0;
+
+          const offer = getProductOffer(product);
+
+          // Admin offer takes priority
+          if (offer) {
+            const discount = Number(offer.discount) || 0;
+
+            return {
+              price: Math.round(basePrice * (1 - discount / 100)),
+              oldPrice: basePrice,
+              discount: discount,
+            };
+          }
+
+          // Check whether this product has an offer record
+          const hasOfferRecord = ecoOffers.some(function (item) {
+            return String(item.productId) === String(product.id);
+          });
+
+          // Expired offers should not continue applying discounts
+          if (hasOfferRecord) {
+            return {
+              price: basePrice,
+              oldPrice: 0,
+              discount: 0,
+            };
+          }
+
+          // Preserve old Shop product prices
+          const previousPrice = Number(product.oldPrice) || 0;
+
+          if (previousPrice > basePrice) {
+            const discount = Math.round(
+              ((previousPrice - basePrice) / previousPrice) * 100,
+            );
+
+            return {
+              price: basePrice,
+              oldPrice: previousPrice,
+              discount: discount,
+            };
+          }
+
+          // Use discount entered in Admin Products
+          const discount = Number(product.discount) || 0;
+
+          if (discount > 0) {
+            return {
+              price: Math.round(basePrice * (1 - discount / 100)),
+              oldPrice: basePrice,
+              discount: discount,
+            };
+          }
+
+          return {
+            price: basePrice,
+            oldPrice: 0,
+            discount: 0,
+          };
+        }
+
+        // Get or create product section
+        function getProductSection(category) {
+          let section = Array.from(
+            document.querySelectorAll(".product-section"),
+          ).find(function (item) {
+            return (
+              item.getAttribute("data-category").toLowerCase() ===
+              String(category).toLowerCase()
+            );
+          });
+
+          if (!section) {
+            section = document.createElement("section");
+
+            section.className = "section product-section";
+            section.setAttribute("data-category", category);
+
+            section.innerHTML = `
+                <div class="section-title">
+                    <h2>${escapeHTML(category)}</h2>
+                    <p>Explore our ${escapeHTML(category.toLowerCase())} products</p>
+                </div>
+
+                <div class="product-grid"></div>
+            `;
+
+            document.querySelector("footer").before(section);
+          }
+
+          return section;
+        }
+
+        // Load products and offers
+        function loadProducts() {
+          let savedProducts = getStoredData("ecoProducts");
+
+          ecoOffers = getStoredData("ecoOffers");
+
+          const oldShopProducts = getOldShopProducts();
+
+          // Import existing Shop products only once
+          if (localStorage.getItem("ecoShopMigrated") !== "yes") {
+            oldShopProducts.forEach(function (oldProduct) {
+              const alreadyExists = savedProducts.some(function (product) {
+                return (
+                  String(product.name).toLowerCase() ===
+                  String(oldProduct.name).toLowerCase()
+                );
+              });
+
+              if (!alreadyExists) {
+                savedProducts.push(oldProduct);
+              }
+            });
+
+            localStorage.setItem("ecoProducts", JSON.stringify(savedProducts));
+
+            localStorage.setItem("ecoShopMigrated", "yes");
+          }
+
+          ecoProducts = savedProducts;
+
+          renderProducts();
+        }
+
+        // Display products
+        function renderProducts() {
+          document
+            .querySelectorAll(".product-section .product-grid")
+            .forEach(function (grid) {
+              grid.innerHTML = "";
+            });
+
+          updateCategoryDropdown();
+
+          ecoProducts.forEach(function (product) {
+            const category = product.category || "Other";
+
+            // Do not display products from inactive categories
+            if (!isCategoryActive(category)) {
+              return;
+            }
+
+            const section = getProductSection(category);
+            const grid = section.querySelector(".product-grid");
+
+            const prices = getProductPrice(product);
+
+            const price = prices.price;
+            const oldPrice = prices.oldPrice;
+            const discount = prices.discount;
+
+            const quantity = Number(product.quantity);
+            const image = normalizeImagePath(product.image);
+
+            const discountHTML =
+              discount > 0 ? `<p class="discount">${discount}% OFF</p>` : "";
+
+            const oldPriceHTML =
+              oldPrice > price ? `<p class="old-price">₹${oldPrice}</p>` : "";
+
+            const stockAvailable = Number.isNaN(quantity) || quantity > 0;
+
+            const productCard = document.createElement("div");
+
+            productCard.className = "product-card";
+
+            productCard.innerHTML = `
+                <img
+                    src="${escapeHTML(image)}"
+                    alt="${escapeHTML(product.name)}"
+                    onerror="this.style.display='none'"
+                >
+
+                ${discountHTML}
+
+                <h3>${escapeHTML(product.name)}</h3>
+
+                <p>${escapeHTML(
+                  product.description || "Quality grocery product",
+                )}</p>
+
+                <p class="rating">★★★★★</p>
+
+                <p class="price">₹${price}</p>
+
+                ${oldPriceHTML}
+
+                ${
+                  stockAvailable
+                    ? `<button class="add-btn" type="button">ADD</button>`
+                    : `<button class="add-btn" type="button" disabled>Out of Stock</button>`
+                }
+            `;
+
+            grid.appendChild(productCard);
+
+            const addButton = productCard.querySelector(".add-btn");
+
+            if (stockAvailable) {
+              addButton.addEventListener("click", function () {
+                addToCart(product, price);
+              });
+            }
+          });
+
+          // Hide empty product sections
+          document
+            .querySelectorAll(".product-section")
+            .forEach(function (section) {
+              const hasProducts = section.querySelector(".product-card");
+
+              section.style.display = hasProducts ? "" : "none";
+            });
+
+          filterProducts();
+          sortProducts();
+        }
+
+        // Add product to cart
+        function addToCart(product, sellingPrice) {
+          const quantity = Number(product.quantity);
+
+          if (!Number.isNaN(quantity) && quantity <= 0) {
+            alert("Sorry, this product is out of stock.");
+            return;
+          }
+
+          const name = product.name;
+          const image = normalizeImagePath(product.image);
+
+          let cart = getStoredData("ecoCart");
+
+          const existingProduct = cart.find(function (item) {
+            return item.name === name;
+          });
+
+          if (existingProduct) {
+            existingProduct.quantity++;
+            existingProduct.price = sellingPrice;
+          } else {
+            cart.push({
+              name: name,
+              price: sellingPrice,
+              image: image,
+              quantity: 1,
+            });
+          }
+
+          localStorage.setItem("ecoCart", JSON.stringify(cart));
+
+          alert(name + " added to cart successfully!");
+        }
+
+        // Search and category filter
+        function filterProducts() {
+          const searchText = searchInput.value.toLowerCase().trim();
+
+          let totalVisible = 0;
+
+          document
+            .querySelectorAll(".product-section")
+            .forEach(function (section) {
+              const category = section.getAttribute("data-category");
+
+              const products = section.querySelectorAll(".product-card");
+
+              let visibleCount = 0;
+
+              products.forEach(function (product) {
+                const productName = product
+                  .querySelector("h3")
+                  .innerText.toLowerCase();
+
+                const matchesSearch = productName.includes(searchText);
+
+                const matchesCategory =
+                  selectedCategory === "all" ||
+                  selectedCategory.toLowerCase() === category.toLowerCase();
+
+                if (matchesSearch && matchesCategory) {
+                  product.style.display = "";
+                  visibleCount++;
+                } else {
+                  product.style.display = "none";
+                }
+              });
+
+              section.style.display = visibleCount > 0 ? "" : "none";
+
+              totalVisible += visibleCount;
+            });
+
+          noProducts.style.display = totalVisible === 0 ? "block" : "none";
+        }
+
+        // Sort products by selling price
+        function sortProducts() {
+          const sortValue = sortSelect.value;
+
+          document
+            .querySelectorAll(".product-section")
+            .forEach(function (section) {
+              const grid = section.querySelector(".product-grid");
+
+              const productCards = Array.from(
+                grid.querySelectorAll(".product-card"),
+              );
+
+              if (sortValue === "low" || sortValue === "high") {
+                productCards.sort(function (a, b) {
+                  const priceA = Number(
+                    a.querySelector(".price").innerText.replace(/[^\d.]/g, ""),
+                  );
+
+                  const priceB = Number(
+                    b.querySelector(".price").innerText.replace(/[^\d.]/g, ""),
+                  );
+
+                  return sortValue === "low"
+                    ? priceA - priceB
+                    : priceB - priceA;
+                });
+              }
+
+              productCards.forEach(function (card) {
+                grid.appendChild(card);
+              });
+            });
+        }
+
+        // Search button
+        searchButton.addEventListener("click", filterProducts);
+
+        searchInput.addEventListener("input", filterProducts);
+
+        searchInput.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            filterProducts();
+          }
+        });
+
+        // Category dropdown
+        categorySelect.addEventListener("change", function () {
+          selectedCategory = categorySelect.value;
+
+          filterProducts();
+        });
+
+        // Category card click
+        categoryGrid.addEventListener("click", function (event) {
+          const card = event.target.closest(".category-card");
+
+          if (!card) return;
+
+          selectedCategory = card.getAttribute("data-category");
+
+          categorySelect.value = selectedCategory;
+
+          filterProducts();
+
+          document.querySelector(".shop-filter").scrollIntoView({
+            behavior: "smooth",
+          });
+        });
+
+        // Sort dropdown
+        sortSelect.addEventListener("change", sortProducts);
+
+        // Update Shop when Admin pages change data in another tab
+        window.addEventListener("storage", function (event) {
+          if (event.key === "ecoProducts") {
+            ecoProducts = getStoredData("ecoProducts");
+
+            renderProducts();
+          }
+
+          if (event.key === "ecoOffers") {
+            ecoOffers = getStoredData("ecoOffers");
+
+            renderProducts();
+          }
+
+          if (event.key === "ecoCategories") {
+            renderCategoryCards();
+            updateCategoryDropdown();
+
+            selectedCategory = "all";
+            categorySelect.value = "all";
+
+            renderProducts();
+          }
+        });
+
+        // Initial loading
+        renderCategoryCards();
+        loadProducts();
+      });
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const reviewForm = document.getElementById("reviewForm");
+        const productSelect = document.getElementById("reviewProduct");
+        const approvedReviews = document.getElementById("approvedReviews");
+
+        function getData(key) {
+          try {
+            return JSON.parse(localStorage.getItem(key)) || [];
+          } catch (error) {
+            return [];
+          }
+        }
+
+        function escapeHTML(value) {
+          return String(value ?? "").replace(/[&<>"']/g, function (char) {
+            return {
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[char];
+          });
+        }
+
+        // Load products into dropdown
+        function loadReviewProducts() {
+          const products = getData("ecoProducts");
+
+          productSelect.innerHTML =
+            '<option value="">Select a product</option>';
+
+          products.forEach(function (product) {
+            const option = document.createElement("option");
+
+            option.value = product.name;
+            option.textContent = product.name;
+
+            productSelect.appendChild(option);
+          });
+        }
+
+        // Display only approved reviews
+        function displayReviews() {
+          const reviews = getData("ecoReviews");
+
+          const approved = reviews.filter(function (review) {
+            return String(review.status).toLowerCase() === "approved";
+          });
+
+          approvedReviews.innerHTML = "";
+
+          if (approved.length === 0) {
+            approvedReviews.innerHTML =
+              "<p>No approved reviews yet. Be the first to share your experience!</p>";
+            return;
+          }
+
+          approved
+            .slice()
+            .reverse()
+            .forEach(function (review) {
+              const item = document.createElement("div");
+
+              item.className = "review-item";
+
+              const rating = Math.max(
+                0,
+                Math.min(5, Number(review.rating) || 0),
+              );
+
+              item.innerHTML = `
+        <h3>${escapeHTML(review.customer || review.name)}</h3>
+        <p><strong>Product:</strong> ${escapeHTML(review.product || review.productName)}</p>
+        <p class="rating">${"★".repeat(rating)}${"☆".repeat(5 - rating)}</p>
+        <p>${escapeHTML(review.text || review.review)}</p>
+        <small>${escapeHTML(review.date || "")}</small>
+      `;
+
+              approvedReviews.appendChild(item);
+            });
+        }
+
+        // Submit customer review
+        reviewForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const name = document.getElementById("reviewName").value.trim();
+          const product = productSelect.value;
+          const rating = document.getElementById("reviewRating").value;
+          const reviewText = document.getElementById("reviewText").value.trim();
+
+          if (!name || !product || !rating || !reviewText) {
+            alert("Please fill in all review details.");
+            return;
+          }
+
+          const reviews = getData("ecoReviews");
+
+          const newReview = {
+            id: "REV" + Date.now(),
+            customer: name,
+            product: product,
+            text: reviewText,
+            rating: Number(rating),
+            date: new Date().toLocaleDateString("en-IN"),
+            status: "Pending",
+          };
+
+          reviews.push(newReview);
+
+          localStorage.setItem("ecoReviews", JSON.stringify(reviews));
+
+          alert(
+            "Your review has been submitted. It will appear after admin approval.",
+          );
+
+          reviewForm.reset();
+        });
+
+        // Refresh approved reviews if admin changes them in another tab
+        window.addEventListener("storage", function (event) {
+          if (event.key === "ecoReviews") {
+            displayReviews();
+          }
+
+          if (event.key === "ecoProducts") {
+            loadReviewProducts();
+          }
+        });
+
+        loadReviewProducts();
+        displayReviews();
+      });
+    </script>
+  </body>
+</html>

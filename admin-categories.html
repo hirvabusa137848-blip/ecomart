@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Categories - EcoMart Admin</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>EcoMart</h2>
+      <p class="admin-label">ADMIN PANEL</p>
+
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="admin-products.html">Products</a>
+      <a href="admin-categories.html" class="active">Categories</a>
+      <a href="admin-orders.html">Orders</a>
+      <a href="admin-customers.html">Customers</a>
+      <a href="admin-inventory.html">Inventory</a>
+      <a href="admin-reviews.html">Reviews & Offers</a>
+
+      <a href="../index.html">View Website</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+    <div class="main-content">
+      <div class="top-header">
+        <div>
+          <h1>Manage Categories</h1>
+          <p>Add, update and manage product categories.</p>
+        </div>
+
+        <div class="profile">
+          <div class="profile-icon">A</div>
+          <div>
+            <strong>Admin</strong>
+            <p>Administrator</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Cards -->
+      <div class="dashboard-cards">
+        <div class="dashboard-card">
+          <h3>Total Categories</h3>
+          <h2 id="totalCategories">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Active Categories</h3>
+          <h2 id="activeCategories">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Total Products</h3>
+          <h2 id="totalProducts">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Featured Categories</h3>
+          <h2 id="featuredCategories">0</h2>
+        </div>
+      </div>
+
+      <!-- Add Category Form -->
+      <div class="dashboard-section">
+        <h2 id="formHeading">Add New Category</h2>
+
+        <form class="product-form" id="categoryForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category Name</label>
+              <input
+                type="text"
+                id="categoryName"
+                placeholder="Enter category name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Category Image</label>
+              <input type="file" id="categoryImage" accept="image/*" />
+              <small>Maximum image size: 500 KB</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Category Description</label>
+            <textarea
+              id="categoryDescription"
+              rows="3"
+              placeholder="Enter category description"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="categoryFeatured" />
+                Featured Category
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>Category Status</label>
+              <select id="categoryStatus">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="admin-btn" id="saveButton">
+            Add Category
+          </button>
+
+          <button
+            type="button"
+            class="edit-btn"
+            id="cancelButton"
+            style="display: none"
+            onclick="resetForm()"
+          >
+            Cancel Edit
+          </button>
+        </form>
+      </div>
+
+      <!-- Category List -->
+      <div class="dashboard-section">
+        <h2>Category List</h2>
+
+        <div class="product-search">
+          <input
+            type="text"
+            id="searchCategory"
+            placeholder="Search category..."
+          />
+
+          <button class="admin-btn" type="button" onclick="displayCategories()">
+            Search
+          </button>
+        </div>
+
+        <div style="overflow-x: auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Category ID</th>
+                <th>Image</th>
+                <th>Category Name</th>
+                <th>Description</th>
+                <th>Products</th>
+                <th>Status</th>
+                <th>Featured</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody id="categoryTable"></tbody>
+          </table>
+        </div>
+
+        <p id="emptyMessage" style="display: none">No categories found.</p>
+      </div>
+    </div>
+
+    <script>
+      // Default categories
+      const defaultCategories = [
+        {
+          id: "C101",
+          name: "Fruits",
+          description: "Fresh and seasonal fruits",
+          image: "../project_img2.jpg",
+          status: "Active",
+          featured: true,
+        },
+        {
+          id: "C102",
+          name: "Vegetables",
+          description: "Fresh green vegetables",
+          image: "../project_img3.jpg",
+          status: "Active",
+          featured: true,
+        },
+        {
+          id: "C103",
+          name: "Dairy",
+          description: "Milk and dairy products",
+          image: "../project_img4.jpg",
+          status: "Active",
+          featured: true,
+        },
+        {
+          id: "C104",
+          name: "Snacks",
+          description: "Chips and packaged snacks",
+          image: "../project_img5.avif",
+          status: "Active",
+          featured: true,
+        },
+        {
+          id: "C105",
+          name: "Grains",
+          description: "Rice, wheat and other grains",
+          image: "../project_img6.jpeg",
+          status: "Active",
+          featured: true,
+        },
+        {
+          id: "C106",
+          name: "Spices",
+          description: "Fresh and packaged spices",
+          image: "../project_img6.jpeg",
+          status: "Active",
+          featured: true,
+        },
+        {
+          id: "C107",
+          name: "Household",
+          description: "Daily household essentials",
+          image: "../project_img7.avif",
+          status: "Active",
+          featured: true,
+        },
+      ];
+
+      // Load categories from localStorage
+      let categories = JSON.parse(localStorage.getItem("ecoCategories"));
+
+      if (!Array.isArray(categories)) {
+        categories = defaultCategories;
+        saveCategories();
+      }
+
+      let editingId = null;
+
+      // Save categories
+      function saveCategories() {
+        localStorage.setItem("ecoCategories", JSON.stringify(categories));
+      }
+
+      // Get product list
+      function getProducts() {
+        return JSON.parse(localStorage.getItem("ecoProducts")) || [];
+      }
+
+      // Count products in a category
+      function countProducts(categoryName) {
+        return getProducts().filter(
+          (product) =>
+            (product.category || "").toLowerCase() ===
+            categoryName.toLowerCase(),
+        ).length;
+      }
+
+      // Update dashboard
+      function updateDashboard() {
+        document.getElementById("totalCategories").textContent =
+          categories.length;
+
+        document.getElementById("activeCategories").textContent =
+          categories.filter((c) => c.status === "Active").length;
+
+        document.getElementById("totalProducts").textContent =
+          getProducts().length;
+
+        document.getElementById("featuredCategories").textContent =
+          categories.filter((c) => c.featured).length;
+      }
+
+      // Display categories
+      function displayCategories() {
+        const table = document.getElementById("categoryTable");
+        const search = document
+          .getElementById("searchCategory")
+          .value.toLowerCase()
+          .trim();
+
+        table.innerHTML = "";
+
+        const filtered = categories.filter((category) =>
+          category.name.toLowerCase().includes(search),
+        );
+
+        document.getElementById("emptyMessage").style.display =
+          filtered.length === 0 ? "block" : "none";
+
+        filtered.forEach((category) => {
+          const productCount = countProducts(category.name);
+
+          const row = document.createElement("tr");
+
+          const imageCell = document.createElement("td");
+          const image = document.createElement("img");
+
+          if (category.image) {
+            image.src = category.image;
+            image.alt = category.name;
+            image.style.width = "50px";
+            image.style.height = "50px";
+            image.style.objectFit = "cover";
+            image.style.borderRadius = "5px";
+            imageCell.appendChild(image);
+          } else {
+            imageCell.textContent = "No Image";
+          }
+
+          const idCell = document.createElement("td");
+          idCell.textContent = category.id;
+
+          const nameCell = document.createElement("td");
+          nameCell.textContent = category.name;
+
+          const descriptionCell = document.createElement("td");
+          descriptionCell.textContent = category.description;
+
+          const countCell = document.createElement("td");
+          countCell.textContent = productCount;
+
+          const statusCell = document.createElement("td");
+          const status = document.createElement("span");
+          status.textContent = category.status;
+
+          status.className =
+            category.status === "Active" ? "stock-available" : "pending";
+
+          statusCell.appendChild(status);
+
+          const featuredCell = document.createElement("td");
+          featuredCell.textContent = category.featured ? "Yes" : "No";
+
+          const actionCell = document.createElement("td");
+
+          const editButton = document.createElement("button");
+          editButton.textContent = "Edit";
+          editButton.className = "edit-btn";
+          editButton.onclick = function () {
+            editCategory(category.id);
+          };
+
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.className = "delete-btn";
+          deleteButton.onclick = function () {
+            deleteCategory(category.id);
+          };
+
+          const statusButton = document.createElement("button");
+          statusButton.textContent =
+            category.status === "Active" ? "Deactivate" : "Activate";
+          statusButton.className = "edit-btn";
+          statusButton.onclick = function () {
+            toggleStatus(category.id);
+          };
+
+          actionCell.appendChild(editButton);
+          actionCell.appendChild(deleteButton);
+          actionCell.appendChild(statusButton);
+
+          row.appendChild(idCell);
+          row.appendChild(imageCell);
+          row.appendChild(nameCell);
+          row.appendChild(descriptionCell);
+          row.appendChild(countCell);
+          row.appendChild(statusCell);
+          row.appendChild(featuredCell);
+          row.appendChild(actionCell);
+
+          table.appendChild(row);
+        });
+
+        updateDashboard();
+      }
+
+      // Add or update category
+      document
+        .getElementById("categoryForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const name = document.getElementById("categoryName").value.trim();
+
+          const description = document
+            .getElementById("categoryDescription")
+            .value.trim();
+
+          const status = document.getElementById("categoryStatus").value;
+          const featured = document.getElementById("categoryFeatured").checked;
+          const file = document.getElementById("categoryImage").files[0];
+
+          if (!name || !description) {
+            alert("Please fill all required fields.");
+            return;
+          }
+
+          // Prevent duplicate category names
+          const duplicate = categories.some(
+            (category) =>
+              category.name.toLowerCase() === name.toLowerCase() &&
+              category.id !== editingId,
+          );
+
+          if (duplicate) {
+            alert("This category already exists.");
+            return;
+          }
+
+          if (file && file.size > 500 * 1024) {
+            alert("Image size must be less than 500 KB.");
+            return;
+          }
+
+          function saveCategory(imageData) {
+            if (editingId) {
+              const index = categories.findIndex(
+                (category) => category.id === editingId,
+              );
+
+              if (index !== -1) {
+                categories[index].name = name;
+                categories[index].description = description;
+                categories[index].status = status;
+                categories[index].featured = featured;
+
+                if (imageData !== null) {
+                  categories[index].image = imageData;
+                }
+
+                // Update product category names if renamed
+                const oldName = categories[index].oldName;
+
+                if (oldName && oldName !== name) {
+                  updateProductCategoryNames(oldName, name);
+                }
+              }
+
+              alert("Category updated successfully!");
+            } else {
+              const newCategory = {
+                id: "C" + Date.now(),
+                name: name,
+                description: description,
+                image: imageData || "",
+                status: status,
+                featured: featured,
+              };
+
+              categories.push(newCategory);
+              alert("Category added successfully!");
+            }
+
+            saveCategories();
+            resetForm();
+            displayCategories();
+          }
+
+          if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function () {
+              saveCategory(reader.result);
+            };
+
+            reader.onerror = function () {
+              alert("Unable to read the selected image.");
+            };
+
+            reader.readAsDataURL(file);
+          } else {
+            saveCategory(null);
+          }
+        });
+
+      // Update product category names after category rename
+      function updateProductCategoryNames(oldName, newName) {
+        const products = getProducts();
+
+        products.forEach((product) => {
+          if (
+            (product.category || "").toLowerCase() === oldName.toLowerCase()
+          ) {
+            product.category = newName;
+          }
+        });
+
+        localStorage.setItem("ecoProducts", JSON.stringify(products));
+      }
+
+      // Edit category
+      function editCategory(id) {
+        const category = categories.find((c) => c.id === id);
+
+        if (!category) return;
+
+        editingId = id;
+
+        document.getElementById("categoryName").value = category.name;
+        document.getElementById("categoryDescription").value =
+          category.description;
+
+        document.getElementById("categoryStatus").value = category.status;
+        document.getElementById("categoryFeatured").checked = category.featured;
+
+        // Save the old name for product updates
+        category.oldName = category.name;
+
+        document.getElementById("formHeading").textContent = "Edit Category";
+
+        document.getElementById("saveButton").textContent = "Update Category";
+
+        document.getElementById("cancelButton").style.display = "inline-block";
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // Delete category
+      function deleteCategory(id) {
+        const category = categories.find((c) => c.id === id);
+
+        if (!category) return;
+
+        const productCount = countProducts(category.name);
+
+        if (productCount > 0) {
+          alert(
+            "This category contains " +
+              productCount +
+              " product(s). Move or delete those products first.",
+          );
+          return;
+        }
+
+        if (confirm("Are you sure you want to delete " + category.name + "?")) {
+          categories = categories.filter((c) => c.id !== id);
+
+          saveCategories();
+          displayCategories();
+
+          alert("Category deleted successfully!");
+        }
+      }
+
+      // Activate or deactivate category
+      function toggleStatus(id) {
+        const category = categories.find((c) => c.id === id);
+
+        if (!category) return;
+
+        category.status = category.status === "Active" ? "Inactive" : "Active";
+
+        saveCategories();
+        displayCategories();
+      }
+
+      // Reset form
+      function resetForm() {
+        editingId = null;
+
+        document.getElementById("categoryForm").reset();
+
+        document.getElementById("formHeading").textContent = "Add New Category";
+
+        document.getElementById("saveButton").textContent = "Add Category";
+
+        document.getElementById("cancelButton").style.display = "none";
+
+        categories.forEach((category) => {
+          delete category.oldName;
+        });
+      }
+
+      // Search while typing
+      document
+        .getElementById("searchCategory")
+        .addEventListener("input", displayCategories);
+
+      // Refresh when products/categories change in another tab
+      window.addEventListener("storage", function (event) {
+        if (event.key === "ecoProducts" || event.key === "ecoCategories") {
+          categories = JSON.parse(localStorage.getItem("ecoCategories")) || [];
+
+          displayCategories();
+        }
+      });
+
+      // Initial display
+      displayCategories();
+    </script>
+  </body>
+</html>

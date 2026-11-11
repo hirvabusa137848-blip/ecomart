@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reviews & Offers - EcoMart Admin</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>EcoMart</h2>
+      <p class="admin-label">ADMIN PANEL</p>
+
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="admin-products.html">Products</a>
+      <a href="admin-categories.html">Categories</a>
+      <a href="admin-orders.html">Orders</a>
+      <a href="admin-customers.html">Customers</a>
+      <a href="admin-inventory.html">Inventory</a>
+      <a href="admin-reviews.html" class="active">Reviews & Offers</a>
+
+      <a href="../index.html">View Website</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+    <div class="main-content">
+      <div class="top-header">
+        <div>
+          <h1>Reviews & Offers</h1>
+          <p>Manage customer feedback and product discounts.</p>
+        </div>
+
+        <div class="profile">
+          <div class="profile-icon">A</div>
+          <div>
+            <strong>Admin</strong>
+            <p>Administrator</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Cards -->
+      <div class="dashboard-cards">
+        <div class="dashboard-card">
+          <h3>Total Reviews</h3>
+          <h2 id="totalReviews">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Positive Reviews</h3>
+          <h2 id="positiveReviews">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Active Offers</h3>
+          <h2 id="activeOffers">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Average Rating</h3>
+          <h2 id="averageRating">0/5</h2>
+        </div>
+      </div>
+
+      <!-- Add New Offer -->
+      <div class="dashboard-section">
+        <h2>Add New Offer</h2>
+
+        <form class="product-form" id="offerForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Offer Name</label>
+              <input
+                type="text"
+                id="offerName"
+                placeholder="Enter offer name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Select Product</label>
+              <select id="offerProduct" required>
+                <option value="">Select Product</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Discount (%)</label>
+              <input
+                type="number"
+                id="offerDiscount"
+                min="1"
+                max="90"
+                placeholder="Enter discount"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Offer End Date</label>
+              <input type="date" id="offerEndDate" required />
+            </div>
+          </div>
+
+          <button type="submit" class="admin-btn">Add Offer</button>
+        </form>
+      </div>
+
+      <!-- Active Offers -->
+      <div class="dashboard-section">
+        <h2>Offers List</h2>
+
+        <div style="overflow-x: auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Offer ID</th>
+                <th>Offer Name</th>
+                <th>Product</th>
+                <th>Discount</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="offerTable"></tbody>
+          </table>
+        </div>
+
+        <p id="noOffers" style="display: none">No offers available.</p>
+      </div>
+
+      <!-- Customer Reviews -->
+      <div class="dashboard-section">
+        <h2>Customer Reviews</h2>
+
+        <div style="overflow-x: auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Review ID</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Rating</th>
+                <th>Review</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="reviewTable"></tbody>
+          </table>
+        </div>
+
+        <p id="noReviews" style="display: none">
+          No customer reviews available yet.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Load data from localStorage
+      let products = JSON.parse(localStorage.getItem("ecoProducts")) || [];
+
+      let offers = JSON.parse(localStorage.getItem("ecoOffers")) || [];
+
+      let reviews = JSON.parse(localStorage.getItem("ecoReviews")) || [];
+
+      // Save offers
+      function saveOffers() {
+        localStorage.setItem("ecoOffers", JSON.stringify(offers));
+      }
+
+      // Save products
+      function saveProducts() {
+        localStorage.setItem("ecoProducts", JSON.stringify(products));
+      }
+
+      // Save reviews
+      function saveReviews() {
+        localStorage.setItem("ecoReviews", JSON.stringify(reviews));
+      }
+
+      // Get today's date
+      function todayDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+
+        return year + "-" + month + "-" + day;
+      }
+
+      // Check whether offer is active
+      function isOfferActive(offer) {
+        return (
+          offer.endDate >= todayDate() &&
+          products.some((p) => String(p.id) === String(offer.productId))
+        );
+      }
+
+      // Load products into dropdown
+      function loadProductDropdown() {
+        const dropdown = document.getElementById("offerProduct");
+
+        dropdown.innerHTML = '<option value="">Select Product</option>';
+
+        products.forEach((product) => {
+          const option = document.createElement("option");
+
+          option.value = product.id;
+          option.textContent = product.name;
+
+          dropdown.appendChild(option);
+        });
+
+        if (products.length === 0) {
+          dropdown.innerHTML =
+            '<option value="">No products available</option>';
+        }
+      }
+
+      // Update dashboard statistics
+      function updateDashboard() {
+        const active = offers.filter(isOfferActive);
+
+        const positive = reviews.filter(
+          (review) =>
+            Number(review.rating) >= 4 && review.status === "Approved",
+        );
+
+        const approvedReviews = reviews.filter(
+          (review) => review.status === "Approved",
+        );
+
+        let average = 0;
+
+        if (approvedReviews.length > 0) {
+          const totalRating = approvedReviews.reduce(
+            (sum, review) => sum + Number(review.rating || 0),
+            0,
+          );
+
+          average = totalRating / approvedReviews.length;
+        }
+
+        document.getElementById("totalReviews").textContent = reviews.length;
+
+        document.getElementById("positiveReviews").textContent =
+          positive.length;
+
+        document.getElementById("activeOffers").textContent = active.length;
+
+        document.getElementById("averageRating").textContent =
+          average.toFixed(1) + "/5";
+      }
+
+      // Display offers
+      function displayOffers() {
+        const table = document.getElementById("offerTable");
+
+        table.innerHTML = "";
+
+        document.getElementById("noOffers").style.display =
+          offers.length === 0 ? "block" : "none";
+
+        offers.forEach((offer) => {
+          const product = products.find(
+            (p) => String(p.id) === String(offer.productId),
+          );
+
+          const active = isOfferActive(offer);
+
+          const row = document.createElement("tr");
+
+          const values = [
+            offer.id,
+            offer.name,
+            product ? product.name : "Product Deleted",
+            offer.discount + "%",
+            offer.endDate,
+            active ? "Active" : "Expired",
+          ];
+
+          values.forEach((value, index) => {
+            const cell = document.createElement("td");
+
+            if (index === 5) {
+              const status = document.createElement("span");
+
+              status.textContent = value;
+              status.className = active ? "stock-available" : "pending";
+
+              cell.appendChild(status);
+            } else {
+              cell.textContent = value;
+            }
+
+            row.appendChild(cell);
+          });
+
+          const actionCell = document.createElement("td");
+
+          const removeButton = document.createElement("button");
+
+          removeButton.textContent = "Remove";
+          removeButton.className = "delete-btn";
+
+          removeButton.onclick = function () {
+            removeOffer(offer.id);
+          };
+
+          actionCell.appendChild(removeButton);
+          row.appendChild(actionCell);
+
+          table.appendChild(row);
+        });
+
+        updateDashboard();
+      }
+
+      // Add offer
+      document
+        .getElementById("offerForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const name = document.getElementById("offerName").value.trim();
+
+          const productId = document.getElementById("offerProduct").value;
+
+          const discount = Number(
+            document.getElementById("offerDiscount").value,
+          );
+
+          const endDate = document.getElementById("offerEndDate").value;
+
+          const product = products.find(
+            (p) => String(p.id) === String(productId),
+          );
+
+          if (!product) {
+            alert("Please select a valid product.");
+            return;
+          }
+
+          if (discount < 1 || discount > 90) {
+            alert("Discount must be between 1 and 90.");
+            return;
+          }
+
+          if (endDate < todayDate()) {
+            alert("Please select today or a future date.");
+            return;
+          }
+
+          const alreadyExists = offers.some(
+            (offer) =>
+              String(offer.productId) === String(productId) &&
+              isOfferActive(offer),
+          );
+
+          if (alreadyExists) {
+            alert("This product already has an active offer.");
+            return;
+          }
+
+          const newOffer = {
+            id: "OF" + Date.now(),
+            name: name,
+            productId: productId,
+            discount: discount,
+            endDate: endDate,
+          };
+
+          offers.push(newOffer);
+
+          // Apply discount to the selected product
+          product.discount = discount;
+
+          saveOffers();
+          saveProducts();
+
+          document.getElementById("offerForm").reset();
+
+          displayOffers();
+
+          alert("Offer added successfully!");
+        });
+
+      // Remove offer
+      function removeOffer(id) {
+        const offer = offers.find((o) => o.id === id);
+
+        if (!offer) return;
+
+        if (!confirm("Are you sure you want to remove this offer?")) {
+          return;
+        }
+
+        offers = offers.filter((o) => o.id !== id);
+
+        // Reset product discount if no other active offer exists
+        const anotherOffer = offers.find(
+          (o) =>
+            String(o.productId) === String(offer.productId) && isOfferActive(o),
+        );
+
+        const product = products.find(
+          (p) => String(p.id) === String(offer.productId),
+        );
+
+        if (product && !anotherOffer) {
+          product.discount = 0;
+        }
+
+        saveOffers();
+        saveProducts();
+
+        displayOffers();
+
+        alert("Offer removed successfully!");
+      }
+
+      // Display customer reviews
+      function displayReviews() {
+        const table = document.getElementById("reviewTable");
+
+        table.innerHTML = "";
+
+        document.getElementById("noReviews").style.display =
+          reviews.length === 0 ? "block" : "none";
+
+        reviews.forEach((review) => {
+          const row = document.createElement("tr");
+
+          const values = [
+            review.id || review.reviewId || "",
+            review.customer || review.name || "",
+            review.product || review.productName || "",
+            (review.rating || 0) + "/5",
+            review.text || review.review || "",
+            review.date || "",
+            review.status || "Pending",
+          ];
+
+          values.forEach((value, index) => {
+            const cell = document.createElement("td");
+
+            if (index === 6) {
+              const status = document.createElement("span");
+
+              status.textContent = value;
+
+              status.className =
+                value === "Approved" ? "stock-available" : "pending";
+
+              cell.appendChild(status);
+            } else {
+              cell.textContent = value;
+            }
+
+            row.appendChild(cell);
+          });
+
+          const actionCell = document.createElement("td");
+
+          const approveButton = document.createElement("button");
+          approveButton.textContent = "Approve";
+          approveButton.className = "edit-btn";
+
+          approveButton.onclick = function () {
+            updateReviewStatus(review, "Approved");
+          };
+
+          const rejectButton = document.createElement("button");
+          rejectButton.textContent = "Reject";
+          rejectButton.className = "delete-btn";
+
+          rejectButton.onclick = function () {
+            updateReviewStatus(review, "Rejected");
+          };
+
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.className = "delete-btn";
+
+          deleteButton.onclick = function () {
+            deleteReview(review);
+          };
+
+          actionCell.appendChild(approveButton);
+          actionCell.appendChild(rejectButton);
+          actionCell.appendChild(deleteButton);
+
+          row.appendChild(actionCell);
+
+          table.appendChild(row);
+        });
+
+        updateDashboard();
+      }
+
+      // Approve or reject review
+      function updateReviewStatus(review, status) {
+        review.status = status;
+
+        saveReviews();
+        displayReviews();
+
+        alert("Review " + status.toLowerCase() + " successfully!");
+      }
+
+      // Delete review
+      function deleteReview(review) {
+        if (!confirm("Are you sure you want to delete this review?")) {
+          return;
+        }
+
+        reviews = reviews.filter((r) => r !== review);
+
+        saveReviews();
+        displayReviews();
+
+        alert("Review deleted successfully!");
+      }
+
+      // Refresh when another admin page changes data
+      window.addEventListener("storage", function (event) {
+        if (event.key === "ecoProducts") {
+          products = JSON.parse(localStorage.getItem("ecoProducts")) || [];
+
+          loadProductDropdown();
+          displayOffers();
+        }
+
+        if (event.key === "ecoOffers") {
+          offers = JSON.parse(localStorage.getItem("ecoOffers")) || [];
+
+          displayOffers();
+        }
+
+        if (event.key === "ecoReviews") {
+          reviews = JSON.parse(localStorage.getItem("ecoReviews")) || [];
+
+          displayReviews();
+        }
+      });
+
+      // Initial loading
+      loadProductDropdown();
+      displayOffers();
+      displayReviews();
+    </script>
+  </body>
+</html>

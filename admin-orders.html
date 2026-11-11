@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Manage Orders - EcoMart Admin</title>
+
+    <link rel="stylesheet" href="admin.css" />
+
+    <style>
+      .order-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 20px 0;
+      }
+
+      .order-controls input,
+      .order-controls select {
+        padding: 11px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+
+      .order-controls input {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .order-controls select {
+        min-width: 150px;
+      }
+
+      .status-select {
+        padding: 7px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 7px;
+        width: 145px;
+      }
+
+      .update-btn {
+        background: #176b3a;
+        color: white;
+        padding: 7px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .update-btn:hover {
+        background: #10532c;
+      }
+
+      .view-btn {
+        background: #176b3a;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .order-details-box {
+        display: none;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 25px;
+        margin-top: 25px;
+      }
+
+      .order-details-box h2 {
+        color: #176b3a;
+        margin-bottom: 15px;
+      }
+
+      .detail-row {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .detail-products {
+        margin-top: 15px;
+      }
+
+      .detail-product {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .close-btn {
+        background: #777;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 15px;
+      }
+
+      .no-orders {
+        text-align: center;
+        padding: 30px;
+        color: #666;
+      }
+
+      .table-container {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .order-table {
+        width: 100%;
+        min-width: 950px;
+        border-collapse: collapse;
+      }
+
+      .order-table th,
+      .order-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .order-table th {
+        background: #f3f8f3;
+      }
+
+      .order-table td {
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+      <h2>EcoMart</h2>
+
+      <p class="admin-label">ADMIN PANEL</p>
+
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="admin-products.html">Products</a>
+      <a href="admin-categories.html">Categories</a>
+      <a href="admin-orders.html" class="active">Orders</a>
+      <a href="admin-customers.html">Customers</a>
+      <a href="admin-inventory.html">Inventory</a>
+      <a href="admin-reviews.html">Reviews & Offers</a>
+
+      <a href="../index.html">View Website</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+
+    <div class="main-content">
+      <div class="top-header">
+        <div>
+          <h1>Manage Orders</h1>
+          <p>View and manage customer orders.</p>
+        </div>
+
+        <div class="profile">
+          <div class="profile-icon">A</div>
+
+          <div>
+            <strong>Admin</strong>
+            <p>Administrator</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORDER STATISTICS -->
+
+      <div class="dashboard-cards">
+        <div class="dashboard-card">
+          <h3>Total Orders</h3>
+          <h2 id="totalOrders">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Pending Orders</h3>
+          <h2 id="pendingOrders">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Processing Orders</h3>
+          <h2 id="processingOrders">0</h2>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Delivered Orders</h3>
+          <h2 id="deliveredOrders">0</h2>
+        </div>
+      </div>
+
+      <!-- ORDER LIST -->
+
+      <div class="dashboard-section">
+        <h2>Order List</h2>
+
+        <div class="order-controls">
+          <input
+            type="text"
+            id="searchOrder"
+            placeholder="Search by order ID or customer name..."
+          />
+
+          <select id="statusFilter">
+            <option value="All">All Orders</option>
+            <option value="Order Placed">Order Placed</option>
+            <option value="Processing">Processing</option>
+            <option value="Out for Delivery">Out for Delivery</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+
+          <button type="button" class="admin-btn" onclick="displayOrders()">
+            Search
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="order-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Order Date</th>
+                <th>Items</th>
+                <th>Total Amount</th>
+                <th>Payment</th>
+                <th>Order Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="orderTableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="noOrders" class="no-orders" style="display: none">
+          No orders found.
+        </div>
+      </div>
+
+      <!-- ORDER DETAILS -->
+
+      <div class="order-details-box" id="orderDetails">
+        <h2>Order Details</h2>
+
+        <div id="orderDetailsContent"></div>
+
+        <button type="button" class="close-btn" onclick="closeDetails()">
+          Close
+        </button>
+      </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+      // LOAD CUSTOMER ORDERS
+
+      let orders = JSON.parse(localStorage.getItem("ecoOrders")) || [];
+
+      // SAFE TEXT DISPLAY
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function (character) {
+          const characters = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;",
+          };
+
+          return characters[character];
+        });
+      }
+
+      // UPDATE DASHBOARD CARDS
+
+      function updateStatistics() {
+        let pending = 0;
+        let processing = 0;
+        let delivered = 0;
+
+        orders.forEach(function (order) {
+          let status = order.status || "Order Placed";
+
+          if (status === "Order Placed") {
+            pending++;
+          }
+
+          if (status === "Processing" || status === "Out for Delivery") {
+            processing++;
+          }
+
+          if (status === "Delivered") {
+            delivered++;
+          }
+        });
+
+        document.getElementById("totalOrders").innerText = orders.length;
+
+        document.getElementById("pendingOrders").innerText = pending;
+
+        document.getElementById("processingOrders").innerText = processing;
+
+        document.getElementById("deliveredOrders").innerText = delivered;
+      }
+
+      // DISPLAY ORDERS
+
+      function displayOrders() {
+        // Refresh data from localStorage
+
+        orders = JSON.parse(localStorage.getItem("ecoOrders")) || [];
+
+        updateStatistics();
+
+        let searchText = document
+          .getElementById("searchOrder")
+          .value.toLowerCase()
+          .trim();
+
+        let selectedStatus = document.getElementById("statusFilter").value;
+
+        let tableBody = document.getElementById("orderTableBody");
+
+        tableBody.innerHTML = "";
+
+        let filteredOrders = orders.filter(function (order) {
+          let orderId = String(order.orderId || "").toLowerCase();
+
+          let customerName = String(order.name || "").toLowerCase();
+
+          let status = order.status || "Order Placed";
+
+          let matchesSearch =
+            orderId.includes(searchText) || customerName.includes(searchText);
+
+          let matchesStatus =
+            selectedStatus === "All" || selectedStatus === status;
+
+          return matchesSearch && matchesStatus;
+        });
+
+        if (filteredOrders.length === 0) {
+          document.getElementById("noOrders").style.display = "block";
+        } else {
+          document.getElementById("noOrders").style.display = "none";
+        }
+
+        filteredOrders.forEach(function (order) {
+          let index = orders.findIndex(function (item) {
+            return item.orderId === order.orderId;
+          });
+
+          let itemCount = (order.products || []).reduce(function (total, item) {
+            return total + Number(item.quantity || 0);
+          }, 0);
+
+          let status = order.status || "Order Placed";
+
+          let total = Number(order.total) || 0;
+
+          let payment = order.payment || "Not specified";
+
+          let row = document.createElement("tr");
+
+          row.innerHTML = `
+
+                    <td>${escapeHTML(order.orderId)}</td>
+
+                    <td>${escapeHTML(order.name)}</td>
+
+                    <td>${escapeHTML(order.date)}</td>
+
+                    <td>${itemCount}</td>
+
+                    <td>₹${total}</td>
+
+                    <td>${escapeHTML(payment)}</td>
+
+                    <td>
+
+                        <select class="status-select"
+                            id="status-${index}">
+
+                            <option value="Order Placed">Order Placed</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Out for Delivery">Out for Delivery</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+
+                        </select>
+
+                        <button
+                            type="button"
+                            class="update-btn"
+                            onclick="updateStatus(${index})"
+                        >
+                            Update
+                        </button>
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="view-btn"
+                            onclick="viewOrder(${index})"
+                        >
+                            View
+                        </button>
+
+                    </td>
+
+                `;
+
+          tableBody.appendChild(row);
+
+          document.getElementById("status-" + index).value = status;
+        });
+      }
+
+      // UPDATE ORDER STATUS
+
+      function updateStatus(index) {
+        let newStatus = document.getElementById("status-" + index).value;
+
+        let orderId = orders[index].orderId;
+
+        // Update order in order history
+
+        orders[index].status = newStatus;
+
+        localStorage.setItem("ecoOrders", JSON.stringify(orders));
+
+        // Update latest order if it is the same order
+
+        let latestOrder = JSON.parse(localStorage.getItem("ecoOrder"));
+
+        if (latestOrder && latestOrder.orderId === orderId) {
+          latestOrder.status = newStatus;
+
+          localStorage.setItem("ecoOrder", JSON.stringify(latestOrder));
+        }
+
+        alert("Order status updated successfully!");
+
+        displayOrders();
+      }
+
+      // VIEW COMPLETE ORDER DETAILS
+
+      function viewOrder(index) {
+        let order = orders[index];
+
+        let productsHTML = "";
+
+        (order.products || []).forEach(function (item) {
+          let itemTotal = Number(item.price) * Number(item.quantity);
+
+          productsHTML += `
+
+                    <div class="detail-product">
+
+                        <span>
+                            ${escapeHTML(item.name)} x ${escapeHTML(item.quantity)}
+                        </span>
+
+                        <strong>₹${itemTotal}</strong>
+
+                    </div>
+
+                `;
+        });
+
+        document.getElementById("orderDetailsContent").innerHTML = `
+
+                <div class="detail-row">
+                    <strong>Order ID:</strong>
+                    ${escapeHTML(order.orderId)}
+                </div>
+
+                <div class="detail-row">
+                    <strong>Customer Name:</strong>
+                    ${escapeHTML(order.name)}
+                </div>
+
+                <div class="detail-row">
+                    <strong>Mobile:</strong>
+                    ${escapeHTML(order.phone)}
+                </div>
+
+                <div class="detail-row">
+                    <strong>Email:</strong>
+                    ${escapeHTML(order.email)}
+                </div>
+
+                <div class="detail-row">
+                    <strong>Address:</strong>
+                    ${escapeHTML(order.address)}, ${escapeHTML(order.city)}
+                    - ${escapeHTML(order.pincode)}
+                </div>
+
+                <div class="detail-row">
+                    <strong>Payment Method:</strong>
+                    ${escapeHTML(order.payment)}
+                </div>
+
+                <div class="detail-row">
+                    <strong>Order Status:</strong>
+                    ${escapeHTML(order.status || "Order Placed")}
+                </div>
+
+                <h3 style="margin-top:20px;">Ordered Products</h3>
+
+                <div class="detail-products">
+                    ${productsHTML}
+                </div>
+
+                <div class="detail-row">
+                    <strong>Subtotal:</strong>
+                    ₹${Number(order.subtotal) || 0}
+                </div>
+
+                <div class="detail-row">
+                    <strong>Delivery Charges:</strong>
+                    ₹${Number(order.delivery) || 0}
+                </div>
+
+                <div class="detail-row">
+                    <strong>Total Amount:</strong>
+                    ₹${Number(order.total) || 0}
+                </div>
+
+            `;
+
+        document.getElementById("orderDetails").style.display = "block";
+
+        document.getElementById("orderDetails").scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+
+      // CLOSE ORDER DETAILS
+
+      function closeDetails() {
+        document.getElementById("orderDetails").style.display = "none";
+      }
+
+      // SEARCH AND FILTER EVENTS
+
+      document
+        .getElementById("searchOrder")
+        .addEventListener("input", displayOrders);
+
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", displayOrders);
+
+      // LOAD ORDERS WHEN PAGE OPENS
+
+      displayOrders();
+    </script>
+  </body>
+</html>
